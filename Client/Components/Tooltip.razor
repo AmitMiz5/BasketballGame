@@ -1,0 +1,58 @@
+﻿@inject HttpClient Http
+
+<div class="tooltip-container" @onmouseover="() => ShowTooltip = true" @onmouseout="() => ShowTooltip = false">
+    @ChildContent
+    @if (ShowTooltip)
+    {
+        <div class="tooltip-box">
+            @TooltipText
+        </div>
+    }
+</div>
+
+<style>
+    .tooltip-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .tooltip-box {
+        position: absolute;
+        top: -40px; /* Adjust this value to bring it closer to the button */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #6baeff; /* Light blue background */
+        color: black;
+        padding: 8px;
+        border-radius: 5px;
+        white-space: nowrap;
+        z-index: 1000;
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+        /* Tooltip arrow */
+        .tooltip-box::after {
+            content: "";
+            position: absolute;
+            bottom: -8px; /* Positions arrow at the bottom */
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 8px;
+            border-style: solid;
+            border-color: #6baeff transparent transparent transparent; /* Light blue arrow */
+        }
+
+
+</style>
+
+@code {
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = default!;
+
+    [Parameter]
+    public string TooltipText { get; set; } = string.Empty;
+
+    private bool ShowTooltip { get; set; }
+}

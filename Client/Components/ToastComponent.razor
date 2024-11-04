@@ -1,0 +1,112 @@
+﻿@if (!string.IsNullOrEmpty(Message))
+{
+    <div class="toast @Type @(isVisible ? "show" : "")" @key="toastId">
+        <div class="toast-content">
+            @if (Type == "success")
+            {
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 24 24" width="24px" height="24px">
+                    <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm-1.2 18L5 11.2l1.4-1.4 4.4 4.4L17.6 7l1.4 1.4L10.8 18z" />
+                </svg>
+            }
+            else if (Type == "error")
+            {
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 24 24" width="24px" height="24px">
+                    <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm5.656 16.242l-1.414 1.414L12 13.414l-4.242 4.242-1.414-1.414L10.586 12l-4.242-4.242 1.414-1.414L12 10.586l4.242-4.242 1.414 1.414L13.414 12l4.242 4.242z" />
+                </svg>
+            }
+            else if (Type == "info")
+            {
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="#fff" viewBox="0 0 24 24" width="24px" height="24px">
+                    <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm1 17h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+            }
+            <p>@Message</p>
+        </div>
+    </div>
+}
+
+<style>
+    .toast {
+        position: fixed;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 200px;
+        max-width: 300px;
+        padding: 15px;
+        border-radius: 5px;
+        color: #fff;
+        z-index: 9999;
+        opacity: 0;
+        transition: top 0.5s ease-out, opacity 0.5s ease-out;
+        font-size: 1.1em;
+    }
+
+        .toast.show {
+            top: 30px;
+            opacity: 1;
+        }
+
+    .toast-content {
+        display: flex;
+        align-items: center;
+    }
+
+        .toast-content .icon {
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        .toast-content p {
+            margin: 0;
+            flex-grow: 1;
+        }
+
+    .toast.success {
+        background-color: #28a745;
+    }
+
+    .toast.error {
+        background-color: #dc3545;
+    }
+
+    .toast.info {
+        background-color: #17a2b8;
+    }
+</style>
+
+@code {
+    private bool isVisible = false;
+    private Guid toastId;
+
+    [Parameter]
+    public string Message { get; set; }
+
+    [Parameter]
+    public EventCallback<string> MessageChanged { get; set; }
+
+    [Parameter]
+    public string Type { get; set; } = "info"; // "success", "info", "error"
+
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(Message))
+        {
+            isVisible = true;
+            toastId = Guid.NewGuid(); 
+            StateHasChanged();
+
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(5000);
+                await InvokeAsync(async () =>
+                {
+                    isVisible = false;
+                    Message = "";
+                    await MessageChanged.InvokeAsync(Message);
+                    StateHasChanged();
+                });
+            });
+        }
+    }
+}

@@ -1,0 +1,184 @@
+﻿@page "/GameEdit/{gameId:int}"
+@using template.Shared.Models.Answer
+@using template.Shared.Models.Game;
+@using template.Shared.Models.Question;
+@inject HttpClient Http;
+@inject NavigationManager Nav;
+
+<div style="display: flex;">
+    <div style="flex: 1; margin-right: 20px;">
+        <h2>עריכת תכני המשחק</h2>
+        <PageTitle>עריכת תכני המשחק</PageTitle>
+
+        @if (selectedQuestion != null)
+        {
+            <AddQuestion GameId="@gameId" QuestionId="@selectedQuestion.QuestionId" questionToAdd="selectedQuestion.questionToAdd" answers="selectedQuestion.answers" OnQuestionUpdated="@(async () => await LoadQuestions())" />
+        }
+        else
+        {
+            <AddQuestion GameId="@gameId" questionToAdd="new QuestionToAdd()" answers="new List<AnswerToAdd> { new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd() }" OnQuestionUpdated="@(async () => await LoadQuestions())" />
+        }
+    </div>
+
+    <div style="flex: 0.4; margin-left: 20px; margin-top: 20px;">
+        <style>
+            .styled-button {
+                background-color: #D99E5E; /* Light orange color */
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                cursor: pointer;
+            }
+
+                .styled-button:hover {
+                    background-color: #c68c53; /* Darker shade on hover */
+                }
+        </style>
+
+        <button class="styled-button" @onclick="NavigateToGamesList">למשחקים שלי</button>
+        <PublishButton game="game"/>
+
+
+        @if (MyQuestionList != null && MyQuestionList.Count > 0)
+        {
+            @foreach (QuestionDetails question in MyQuestionList)
+            {
+                <div style="border: 1px solid #ccc; margin: 5px; padding: 10px; display: flex; align-items: center; justify-content: space-between;">
+                    <div>
+                        <strong>שאלה:</strong> @question.QuestionText
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <!-- Flex container to align buttons side-by-side -->
+                        <Tooltip TooltipText="עריכת השאלה">
+                            <button style="border: none; padding: 5px; border-radius: 3px;"
+                                    @onclick="() => LoadQuestionDetails(question.ID)">
+                                <img src="/Icons/EditIcon.svg" alt="Edit" style="height: 24px; width: 24px; border: none" />
+                            </button>
+                        </Tooltip>
+
+                        <ConfirmPopup TitleText="מחיקת שאלה"
+                                      BodyText=@($"האם אתה בטוח שברצונך למחוק את שאלה '{question.QuestionText}'?")
+                                      ConfirmButtonText="מחק"
+                                      CancelButtonText="בטל"
+                                      OnConfirmClick="() => DeleteQuestion(question.ID)">
+                            <OpenButton>
+                                <Tooltip TooltipText="מחיקת שאלה">
+                                    <button style="border: none; padding: 5px; border-radius: 3px;">
+                                        <img src="/Icons/DeleteIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" />
+                                    </button>
+                                </Tooltip>
+                            </OpenButton>
+                        </ConfirmPopup>
+                    </div>
+                </div>
+
+                 
+
+            }
+            @if (selectedQuestion != null)
+            {
+                <button @onclick="()=>{selectedQuestion=null;}"> הוספת שאלה חדשה</button>
+
+            }
+        }
+        else
+        {
+        <p>אין שאלות למשחק</p>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int gameId { get; set; }
+
+    string msg = "";
+    List<QuestionDetails> MyQuestionList = new List<QuestionDetails>();
+    QuestionData selectedQuestion;
+
+    GameQuestionRequest gameDto = new GameQuestionRequest();
+
+    private GameTable game = new GameTable();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadGame();
+        await LoadQuestions();
+    }
+
+    private void NavigateToGamesList()
+    {
+        Nav.NavigateTo("GamesList");
+    }
+
+    public async Task LoadGame()
+    {
+        var response = await Http.GetAsync("api/GameData/GetGameData/" + gameId);
+
+        if (response.IsSuccessStatusCode)
+        {
+            game = await response.Content.ReadFromJsonAsync<GameTable>();
+        }
+    }
+
+
+    public async Task LoadQuestions()
+    {
+        gameDto.GameID = gameId;
+
+        var response = await Http.PostAsJsonAsync("api/GameData/GetQuestionList", gameDto);
+        string error = await response.Content.ReadAsStringAsync();
+
+        if (response.IsSuccessStatusCode)
+        {
+            MyQuestionList = await response.Content.ReadFromJsonAsync<List<QuestionDetails>>();
+        }
+        else
+        {
+            msg = "Error retrieving questions: " + error;
+        }
+
+    }
+
+    public async Task LoadQuestionDetails(int questionID)
+    {
+        var response = await Http.GetAsync("api/GameData/getQuestion/"+questionID);
+        string error = await response.Content.ReadAsStringAsync();
+
+        if (response.IsSuccessStatusCode)
+        {
+            selectedQuestion = await response.Content.ReadFromJsonAsync<QuestionData>();
+            selectedQuestion.QuestionId = questionID;
+        }
+        else
+        {
+            msg = "Error retrieving question details: " + error;
+        }
+    }
+
+    private async Task DeleteQuestion(int questionID)
+    {
+        var response = await Http.DeleteAsync($"api/GameData/deleteQuestion/{gameId}/{questionID}");
+        if (response.IsSuccessStatusCode)
+        {
+            msg = "שאלה נמחקה בהצלחה";
+            MyQuestionList.RemoveAll(q => q.ID == questionID); // Remove the deleted question from the list
+            StateHasChanged(); // Update UI
+        }
+        else
+        {
+            msg = "תקלה במחיקת שאלה, נסה שנית";
+        }
+    }
+
+    private class QuestionData
+    {
+        public QuestionToAdd questionToAdd { get; set; }
+        public List<AnswerToAdd> answers { get; set; }
+        public int QuestionId { get; set; }
+    }
+}

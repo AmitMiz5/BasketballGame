@@ -1,0 +1,143 @@
+﻿@using template.Shared.Models.Game;
+@inject HttpClient Http;
+
+<Tooltip TooltipText="@GetTooltipText()">
+    <button class="publish-button @GetButtonClass()" @onclick="TogglePublish" disabled="@(!game.CanPublish)">
+        @GetButtonText()
+    </button>
+</Tooltip>
+
+
+<style>
+    .publish-button {
+        color:white;
+        border: none;
+        padding: 12px 36px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+        .publish-button[disabled] {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+
+        .publish-button.published {
+            background-color: #FFA500;
+            color: white;
+        }
+
+        .publish-button.to-publish {
+            background-color: blue;
+            color: white;
+        }
+
+        .publish-button:hover:not([disabled]) {
+            filter: brightness(90%);
+        }
+
+        .publish-button:active:not([disabled]) {
+            transform: scale(0.95);
+        }
+</style>
+
+@code {
+    [Parameter]
+    public GameTable game { get; set; }
+
+    [Parameter]
+    public EventCallback OnGameUpdated { get; set; }
+
+    private async Task TogglePublish()
+    {
+        if (!game.CanPublish)
+        {
+            return;
+        }
+
+        PublishGame gameToSend = new PublishGame
+            {
+                ID = game.ID,
+                IsPublish = !game.IsPublish
+            };
+
+        var publishGameResponse = await Http.PostAsJsonAsync("api/Table/updateGameIsPublish", gameToSend);
+        string error = await publishGameResponse.Content.ReadAsStringAsync();
+
+        if (error == "thisGameCannotBePublished")
+        {
+            game.IsPublish = false;
+            game.CanPublish = false;
+            // Handle error message if needed
+        }
+
+        if (publishGameResponse.IsSuccessStatusCode)
+        {
+            game.IsPublish = !game.IsPublish;
+            game.LastUpdated = DateTime.Now;
+            if (OnGameUpdated.HasDelegate)
+            {
+                await OnGameUpdated.InvokeAsync(null);
+            }
+        }
+        else
+        {
+            // Handle other errors if needed
+        }
+    }
+
+    private string GetButtonClass()
+    {
+        if (!game.CanPublish)
+        {
+            return string.Empty;
+        }
+        else if (game.IsPublish)
+        {
+            return "published";
+        }
+        else
+        {
+            return "to-publish";
+        }
+    }
+
+    private string GetButtonText()
+    {
+        if (!game.CanPublish)
+        {
+            return "לא ניתן לפרסום";
+        }
+        else if (game.IsPublish)
+        {
+            return "פורסם";
+        }
+        else
+        {
+            return "פרסם";
+        }
+    }
+
+    private string GetTooltipText()
+    {
+        if (!game.CanPublish)
+        {
+            return "לא ניתן לפרסום";
+        }
+        else if (game.IsPublish)
+        {
+            return "לחץ על מנת לבטל פרסום";
+        }
+        else
+        {
+            return "לחץ על מנת לפרסם";
+        }
+    }
+
+}

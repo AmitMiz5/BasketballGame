@@ -1,0 +1,94 @@
+﻿@inject HttpClient Http;
+@using template.Shared.Models.Game
+
+<Tooltip TooltipText="הגדרות משחק">
+    <button style="border: none; padding: 5px 10px; border-radius: 3px;" @onclick="OpenPopup">
+        <img src="/Icons/SettingsIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" />
+    </button>
+</Tooltip>
+
+
+<div style="display: @(isPopupOpen ? "flex" : "none"); justify-content: center; align-items: center; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
+    <div style="background-color: white; padding: 20px; border-radius: 8px; width: 300px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <span style="cursor: pointer; float: right; font-size: 20px;" @onclick="ClosePopup">&times;</span>
+        <h3 style="text-align: center;">עריכת משחק</h3>
+
+         <!-- Form with validation -->
+        <EditForm Model="game" OnValidSubmit="SaveChanges">
+            <DataAnnotationsValidator />
+            
+
+            <label for="gameName">שם המשחק:</label>
+            <InputText id="gameName" @bind-Value="game.GameName" style="width: 100%; margin-bottom: 10px; padding: 5px; border-radius: 4px; border: 1px solid #ccc;" />
+            <ValidationMessage For="@(() => game.GameName)" />
+
+            <label for="questionTime">זמן לכל שאלה:</label>
+            <select id="questionTime" @bind="game.QuestionTime" style="width: 100%; margin-bottom: 10px; padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                <option value="30">30 שניות</option>
+                <option value="60">60 שניות</option>
+                <option value="90">90 שניות</option>
+                <option value="0">ללא הגבלה </option>
+            </select>
+
+            <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                שמור שינויים
+            </button>
+        </EditForm>
+
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public GameTable game { get; set; } = new GameTable();
+
+    [Parameter]
+    public EventCallback OnGameUpdated { get; set; }
+
+    // private EditContext editContext;
+
+    private bool isPopupOpen = false;
+
+    private void OpenPopup()
+    {
+        isPopupOpen = true;
+    }
+
+    private void ClosePopup()
+    {
+        isPopupOpen = false;
+    }
+
+    private async void SaveChanges()
+    {
+     
+        Console.WriteLine($"Game Name: {game.GameName}, Question Time: {game.QuestionTime}");
+        UpdateGame(game);
+        ClosePopup();
+    }
+    
+
+    private async Task UpdateGame(GameTable game) // פונקציה למחיקת התמונות שנבחרו
+    {
+
+        var updateGameResponse = await Http.PostAsJsonAsync("api/Table/updateGameSettings", game);
+        if (updateGameResponse.IsSuccessStatusCode == true)
+        {
+
+            Console.WriteLine(game.GameName + "gameName");
+            await OnGameUpdated.InvokeAsync();
+
+        }
+        else
+        {
+            // ToDo put error msg
+        }
+    }
+
+   
+
+    // protected override void OnInitialized()
+    // {
+    //     editContext = new EditContext(game);
+    // }
+}

@@ -1,0 +1,70 @@
+﻿@inject HttpClient Http
+
+<div>
+    @if (OpenButton != null)
+    {
+        <div @onclick="OpenPopup">
+            @OpenButton
+        </div>
+    }
+</div>
+
+<div style="display: @(isPopupOpen ? "flex" : "none"); justify-content: center; align-items: center; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;color:black;">
+    <div style="background-color: white; padding: 20px; border-radius: 8px; width: 300px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+        <span style="cursor: pointer; float: right; font-size: 20px;" @onclick="ClosePopup">&times;</span>
+        <h3 style="text-align: center;">@TitleText</h3>
+        <p style="text-align: center;">@BodyText</p>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <button @onclick="Cancel" style="width: 45%; padding: 10px; background-color: #d1d5db; color: black; border: none; border-radius: 5px; cursor: pointer;">
+                @CancelButtonText
+            </button>
+            <button @onclick="Confirm" style="width: 45%; padding: 10px; background-color: #f1a544; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                @ConfirmButtonText
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string TitleText { get; set; } = "Confirm";
+
+    [Parameter]
+    public string BodyText { get; set; } = "Are you sure you want to proceed?";
+
+    [Parameter]
+    public string ConfirmButtonText { get; set; } = "Confirm";
+
+    [Parameter]
+    public string CancelButtonText { get; set; } = "Cancel";
+
+    [Parameter]
+    public EventCallback OnConfirmClick { get; set; }
+
+    [Parameter]
+    public RenderFragment OpenButton { get; set; }
+
+    private bool isPopupOpen = false;
+
+    private void OpenPopup()
+    {
+        isPopupOpen = true;
+    }
+
+    private void ClosePopup()
+    {
+        isPopupOpen = false;
+    }
+
+    private async Task Confirm()
+    {
+        await OnConfirmClick.InvokeAsync();
+        ClosePopup();
+    }
+
+    private void Cancel()
+    {
+        ClosePopup();
+    }
+}

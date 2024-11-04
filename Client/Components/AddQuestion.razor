@@ -1,0 +1,372 @@
+﻿@inject HttpClient Http;
+@inject NavigationManager Nav;
+@using template.Shared.Models.Answer;
+@using template.Shared.Models.Game;
+@using template.Shared.Models.Question;
+
+<EditForm Model="questionToAdd" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <div style="margin-bottom:25px;">
+        <label for="question-text" style="display: block; font-weight: bold">
+            @(QuestionId != null ? "עריכת שאלה:" : "הוספת שאלה חדשה:")
+        </label>
+        <input type="text" id="question-text" @bind="questionToAdd.QuestionText" style="width: 30%; padding: 5px; border-radius: 4px; border: 1px solid #ccc;" />
+
+        <label for="FileInputID" style="background-color: #fff; border: 1px solid #d5d9d9; border-radius: 8px; box-shadow: rgba(213, 217, 217, .5) 0 2px 5px 0; box-sizing: border-box; color: #0f1111; cursor: pointer; display: inline-block; font-family: 'Amazon Ember', sans-serif; font-size: 13px; line-height: 29px; padding: 0 10px 0 11px; position: relative; text-align: center; text-decoration: none; user-select: none; -webkit-user-select: none; touch-action: manipulation; vertical-align: middle;" role="button">
+            @(questionToAdd.QuestionPhoto != null ? "החלף תמונה" : "בחר תמונה")
+        </label>
+        <InputFile id="FileInputID" OnChange="UploadQuestionImg" hidden />
+
+        @if (!string.IsNullOrEmpty(questionToAdd.QuestionPhoto))
+        {
+            <div style="position: relative; display: inline-block;">
+                @if (questionToAdd.QuestionPhoto.Contains(".png"))
+                {
+                    <img src="/uploadedFiles/@questionToAdd.QuestionPhoto" alt="Uploaded Image" style="max-width: 150px;" />
+                }
+                else
+                {
+                    <img src="data:image/png;base64,@questionToAdd.QuestionPhoto" alt="Uploaded Image" style="max-width: 150px;" />
+                }
+
+                <span class="remove-image" style="position: absolute; top: 0; left: 0; background-color: red; color: white; padding: 1px 2px; cursor: pointer;" @onclick="() => { questionToAdd.QuestionPhoto = null; }">X</span>
+            </div>
+        }
+
+        <ValidationMessage For="@(() => questionToAdd.QuestionText)" />
+    </div>
+
+    @for (int i = 0; i < answers.Count; i++)
+    {
+        var index = i;
+
+        <div class="answer-container" style="margin-bottom: 15px; display: flex; border: 1px dashed #000; border-radius: 8px; padding: 0; background-color: #e0f7fa;">
+            <div style="flex: 0 0 auto; padding-right: 10px;">
+                <input type="checkbox" id="@($"isCorrect-{index}")"
+                       checked="@answers[index].IsCorrect"
+                       @onchange="@(e => OnCheckboxChanged(index, e.Value))"
+                       style="width: 20px; height: 20px; cursor: pointer;" />
+            </div>
+
+            <div class="answer-section" style="flex: 1; padding: 20px; display: flex; align-items: center; justify-content: center; border-right: 1px solid #ddd;">
+                <input type="text" id="@($"answerContent-{index}")" @bind="answers[index].AnswerContent"
+                       style="width: 90%; padding: 5px; border-radius: 4px; border: 1px solid #ccc;" />
+                <span class="hover-icon text-icon" style="font-size: 2em; position: absolute;">T</span>
+                <ValidationMessage For="@(() => answers[index].AnswerContent)" />
+            </div>
+
+            <div class="answer-section" style="flex: 1; padding: 20px; display: flex; align-items: center; justify-content: center;">
+                <InputFile id="@($"answerImage-{index}")" OnChange="@(e => UploadAnswerImg(index, e))" hidden />
+                @if (answers[index].IsPhoto)
+                {
+                    <img src="/uploadedFiles/@answers[index].AnswerContent" alt="Uploaded Answer Image" style="max-width: 100%; max-height: 100px; border-radius: 4px;" />
+                }
+                <span class="hover-icon image-icon" style="font-size: 2em; position: absolute;">🖼️</span>
+            </div>
+        </div>
+    }
+
+    <style>
+        .answer-container {
+            display: flex;
+            position: relative;
+            border: 1px dashed #000;
+            border-radius: 8px;
+            background-color: #e0f7fa;
+        }
+
+        .answer-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Divider between the two sections */
+        .answer-section:first-child {
+            border-right: 1px solid #ddd;
+        }
+
+        .hover-icon {
+            display: inline;
+            position: absolute;
+        }
+
+        /* Hide the icons when hovering over the input area */
+        .answer-section:hover .text-icon,
+        .answer-section:hover .image-icon {
+            display: none;
+        }
+    </style>
+
+    <input type="submit" value="שמירה" disabled="@(!IsFormValid)" />
+</EditForm>
+
+@if (QuestionId != null)
+{
+    <ConfirmPopup TitleText="מחיקת שאלה"
+                  BodyText="האם אתה בטוח שברצונך למחוק את השאלה?"
+                  ConfirmButtonText="מחק"
+                  CancelButtonText="בטל"
+                  OnConfirmClick="() => HandleDeleteQuestion()">
+        <OpenButton>
+            <button>מחיקת שאלה</button>
+        </OpenButton>
+    </ConfirmPopup>
+}
+
+<ToastComponent Type="@msgType" @bind-Message="msg" />
+
+@code {
+    [Parameter]
+    public int GameId { get; set; }
+
+    [Parameter]
+    public int? QuestionId { get; set; }
+
+    [Parameter]
+    public EventCallback OnQuestionUpdated { get; set; } // יצירת מופע על ביצוע שינוי
+
+    [Parameter]
+    public QuestionToAdd questionToAdd { get; set; }
+
+    [Parameter]
+    public List<AnswerToAdd> answers { get; set; }
+
+    [Parameter]
+    public bool isEditingQuestion { get; set; }
+
+    string myFileImage = ""; // משתנה לתמונה בבסיס 64
+    long maxFileSize = 4194304; // גודל מקסימלי לקובץ
+    private string imageBase64 = "";
+
+    string msg = "";
+    string msgType = "info"; // Message type for the toast
+
+    private void OnCheckboxChanged(int index, object isChecked)
+    {
+        answers[index].IsCorrect = (bool)isChecked;
+        for (int i = 0; i < answers.Count; i++)
+        {
+            if (i != index)
+            {
+                answers[i].IsCorrect = false;
+            }
+        }
+    }
+
+    private void RemoveImage(int index)
+    {
+        answers[index].IsPhoto = false;
+        answers[index].AnswerContent = null;
+        // ToDo: delete from folder
+    }
+
+    private bool IsFormValid
+    {
+        get
+        {
+            bool questionTextFilled = !string.IsNullOrWhiteSpace(questionToAdd.QuestionText);
+            int filledAnswers = answers.Count(a => !string.IsNullOrWhiteSpace(a.AnswerContent));
+            bool hasAtLeastTwoAnswers = filledAnswers >= 2;
+            bool hasSelectedCorrectAnswer = answers.Any(a => a.IsCorrect && !string.IsNullOrWhiteSpace(a.AnswerContent));
+            return questionTextFilled && hasAtLeastTwoAnswers && hasSelectedCorrectAnswer;
+        }
+    }
+
+    private async Task UploadQuestionImg(InputFileChangeEventArgs e)
+    {
+        var imageFiles = e.GetMultipleFiles();
+        msg = "";
+        foreach (var file in imageFiles)
+        {
+            if (file.Size <= maxFileSize)
+            {
+                var buffer = new byte[file.Size];
+                await file.OpenReadStream(maxFileSize).ReadAsync(buffer);
+                var imageBase64 = Convert.ToBase64String(buffer);
+
+                questionToAdd.QuestionPhoto = imageBase64;
+            }
+        }
+    }
+
+    private async Task UploadAnswerImg(int index, InputFileChangeEventArgs e)
+    {
+        var imageFiles = e.GetMultipleFiles();
+        foreach (var file in imageFiles)
+        {
+            if (file.Size <= maxFileSize)
+            {
+                var buffer = new byte[file.Size];
+                await file.OpenReadStream(maxFileSize).ReadAsync(buffer);
+                var imageBase64 = Convert.ToBase64String(buffer);
+
+                var uploadRequest = new
+                {
+                    ImageBase64 = imageBase64
+                };
+
+                var saveResponse = await Http.PostAsJsonAsync("api/Media/upload", uploadRequest);
+
+                if (saveResponse.IsSuccessStatusCode)
+                {
+                    string fileName = await saveResponse.Content.ReadAsStringAsync();
+                    answers[index].IsPhoto = true; // Mark that an image is uploaded
+                    answers[index].AnswerContent = fileName; // Assuming you have a property for the image path
+                }
+            }
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        questionToAdd.GameID = GameId;
+        GameTable game = new GameTable
+        {
+            LastUpdated = DateTime.Now
+        };
+
+        if (!string.IsNullOrEmpty(questionToAdd.QuestionPhoto) && !questionToAdd.QuestionPhoto.Contains(".png"))
+        {
+            var uploadRequest = new { ImageBase64 = questionToAdd.QuestionPhoto };
+            var saveResponse = await Http.PostAsJsonAsync("api/Media/upload", uploadRequest);
+
+            if (saveResponse.IsSuccessStatusCode)
+            {
+                questionToAdd.QuestionPhoto = await saveResponse.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                msg = "Error saving image.";
+                msgType = "error";
+                return; // Exit if the image upload fails
+            }
+        }
+
+        var filledAnswers = answers.Where(a => !string.IsNullOrWhiteSpace(a.AnswerContent)).ToList();
+        questionToAdd.Answers = filledAnswers;
+
+        HttpResponseMessage questionRes;
+
+        if (QuestionId != null)
+        {
+            questionRes = await Http.DeleteAsync($"api/GameData/deleteQuestion/{GameId}/{QuestionId}");
+            if (questionRes.IsSuccessStatusCode)
+            {
+                questionRes = await Http.PostAsJsonAsync("api/GameData/addQuestion/", questionToAdd);
+            }
+        }
+        else
+        {
+            questionRes = await Http.PostAsJsonAsync("api/GameData/addQuestion/", questionToAdd);
+        }
+
+        if (questionRes.IsSuccessStatusCode)
+        {
+            msgType = "success";
+            if (QuestionId != null)
+            {
+                msg = "השאלה עודכנה בהצלחה";
+            }
+            else
+            {
+                msg = "השאלה התווספה בהצלחה";
+            }
+            await OnQuestionUpdated.InvokeAsync(); 
+            questionToAdd.QuestionText = "";
+            questionToAdd = new QuestionToAdd();
+            answers = new List<AnswerToAdd>
+            {
+                new AnswerToAdd(),
+                new AnswerToAdd(),
+                new AnswerToAdd(),
+                new AnswerToAdd(),
+                new AnswerToAdd(),
+                new AnswerToAdd()
+            };
+        }
+        else
+        {
+            string error = await questionRes.Content.ReadAsStringAsync();
+            ShowError(error);
+            msgType = "error";
+            if (QuestionId != null)
+            {
+                msg = "תקלה בעריכת שאלה";
+            }
+            else
+            {
+                msg = "תקלה בהוספת שאלה";
+            }
+        }
+    }
+
+    private async void HandleDeleteQuestion()
+    {
+        var questionRes = await Http.DeleteAsync($"api/GameData/deleteQuestion/{GameId}/{QuestionId}");
+        if (questionRes.IsSuccessStatusCode)
+        {
+            msgType = "success";
+            msg = "שאלה נמחקה בהצלחה";
+        }
+        else
+        {
+            msgType = "error";
+            msg = "תקלה במחיקת שאלה, נסה שנית";
+        }
+
+        await OnQuestionUpdated.InvokeAsync();
+
+    }
+
+    void ShowError(string error)
+    {
+        msgType = "error";
+        switch (error)
+        {
+            case "No games for this user":
+                msg = "עדין לא יצרת משחקים... זה הזמן ליצור את הראשון :)";
+                break;
+            case "user is not authenticated":
+                msg = "ארעה בעיה בעת אימות המשתמש";
+                break;
+            case "Game not created":
+                msg = "ארעה בעיה בעת יצירת המשחק";
+                break;
+            case "Game code not created":
+                msg = "ארעה בעיה בעת יצירת קוד המשחק";
+                break;
+            case "It's Not Your Game":
+                msg = "המשחק הזה אינו שלך...";
+                break;
+            case "This game cannot be published":
+                msg = "המשחק אינו מאושר לפרסום";
+                break;
+            case "Update Failed":
+                msg = "בעיה בעדכון המשחק";
+                break;
+            case "Question not created":
+                msg = "השאלה לא התווספה";
+                break;
+            case "Answer not created":
+                msg = "התשובה לא התווספה";
+                break;
+            case "game ID or question ID in missing":
+                msg = "משחק או שאלה לא נמצאו";
+                break;
+            case "question wasn't deleted":
+                msg = "בעיה במחיקת שאלה";
+                break;
+            default:
+                msg = "An unknown error occurred.";
+                break;
+        }
+    }
+
+    void Navigate()
+    {
+        Nav.NavigateTo("./", true);
+    }
+}
