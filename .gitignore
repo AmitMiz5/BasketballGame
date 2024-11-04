@@ -1,0 +1,97 @@
+# ASP.NET Core files
+bin/
+obj/
+**/*.db
+**/*.db-shm
+**/*.db-wal
+.vscode/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Auto-generated files
+Generated_Code/
+
+# Azure Pipelines
+.azdo/
+pipelines.yml
+
+# JetBrains Rider
+.idea/
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# DotNet and NuGet files
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+*.dll
+*.exe
+*.exe.config
+*.log
+*.vspscc
+.vs/
+.vscode/
+*.pdb
+
+# Node/NPM/Yarn files
+node_modules/
+
+# Publish output
+publish/
+wwwroot/
+
+# Mac/Linux file system
+.DS_Store
+.idea/
+.vscode/
+__MACOSX/
+
+# Logs
+*.log
+logs/
+*.log
+
+# Razor and Blazor specific files
+wwwroot/css/app.css
+wwwroot/css/app.css.map
+wwwroot/css/
+wwwroot/js/
+wwwroot/css/bootstrap.min.css
+wwwroot/index.html
+wwwroot/favicon.ico
+wwwroot/_framework/_bin/
+wwwroot/_framework/_blazor.*
+wwwroot/_framework/_blazor.boot.json
+
+# Entity Framework generated files
+Migrations/
+
+# Secret files
+secrets.json
+.env
+.env.local
+.env.*.local
+
+# Additional settings
+launchSettings.json
+
+# Package files
+*.nupkg
+*.snupkg
+*.nuspec
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
