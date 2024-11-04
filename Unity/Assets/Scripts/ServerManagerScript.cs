@@ -15,7 +15,8 @@ public class ServerManagerScript : MonoBehaviour
     [SerializeField] Sprite tempImage;
     [SerializeField] private TextMeshProUGUI codeMessage;
 
-    string projectURL = "https://localhost:7022/"; //הנתיב לפרוייקט
+    string projectURL = "./../"; //הנתיב לפרוייקט
+    //string projectURL = "https://localhost:7022/"; //הנתיב לפרוייקט
     string apiURL = "api/Unity/GetGameDetails/"; //הנתיב לקונטרולר שיצרתם
     string imagesURL = "uploadedFiles/"; //הנתיב לתיקיית התמונות
 
@@ -51,7 +52,6 @@ public class ServerManagerScript : MonoBehaviour
     private async Task<GameData> getDataFromServer(string code)
     {
         string endPoint = projectURL + apiURL + code;
-        Debug.Log(projectURL + apiURL + code);
         using var http = UnityWebRequest.Get(endPoint);
         var get = http.SendWebRequest();
 
@@ -64,12 +64,12 @@ public class ServerManagerScript : MonoBehaviour
             string jsonResponse = http.downloadHandler.text;
             ServerGame serverGame = JsonUtility.FromJson<ServerGame>(jsonResponse);
             GameData UnityGame = new GameData(); //יצירת משחק חדש
+            UnityGame.isPublish = serverGame.isPublish;
             UnityGame.gameName = serverGame.gameName;//server game לפי השמות בדאטה בייס
             UnityGame.questionTime = serverGame.questionTime;
             UnityGame.questionList = new List<QuestionData>();
             foreach (ServerQuestion question in serverGame.questions)
             {
-                Debug.Log("here: " + question);
                 QuestionData unityQuestion = new QuestionData();
                 unityQuestion.content = question.questionText;
                 if (string.IsNullOrEmpty(question.questionPhoto) == false)
@@ -95,10 +95,8 @@ public class ServerManagerScript : MonoBehaviour
                 }
                 UnityGame.questionList.Add(unityQuestion);
             }
-            Debug.Log(jsonResponse);
 
             // Start the game after successful data retrieval
-            //startScript.StartGame(); // מתחיל את המשחק לאחר שליפה מוצלחת
             return UnityGame; // החזרת משחק
 
 
@@ -106,7 +104,6 @@ public class ServerManagerScript : MonoBehaviour
         else
         {
             string errorMsg = http.downloadHandler.ToString();
-            Debug.Log(errorMsg);
             return null;
         }
     }

@@ -55,8 +55,8 @@
                 <ValidationMessage For="@(() => answers[index].AnswerContent)" />
             </div>
 
-            <div class="answer-section" style="flex: 1; padding: 20px; display: flex; align-items: center; justify-content: center;">
-                <InputFile id="@($"answerImage-{index}")" OnChange="@(e => UploadAnswerImg(index, e))" hidden />
+            <div class="answer-section" style="flex: 1; padding: 20px; display: flex; align-items: center; justify-content: center;" >
+                <InputFile id="@($"answerImage-{index}")" OnChange="@(e => UploadAnswerImg(index, e))" />
                 @if (answers[index].IsPhoto)
                 {
                     <img src="/uploadedFiles/@answers[index].AnswerContent" alt="Uploaded Answer Image" style="max-width: 100%; max-height: 100px; border-radius: 4px;" />
