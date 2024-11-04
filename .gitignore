@@ -95,3 +95,34 @@ launchSettings.json
 *.tmp
 *.temp
 *.bak
+
+
+# Unity specific files
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+
+# Asset Bundles
+*.unity3d
+*.assetbundle
+*.unitypackage
+
+# Audio files
+*.aac
+*.aiff
+*.mp3
+*.ogg
+*.wav
+
+# VS Code specific for Unity
+.vscode/
+
+# Additional user-specific files
+*.pidb
+*.sln*
+*.userprefs
+/UnityGenerated/

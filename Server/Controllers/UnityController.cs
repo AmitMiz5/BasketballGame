@@ -55,14 +55,10 @@ namespace template.Server.Controllers
                 return BadRequest("אין משחק עם קוד " + gameCode);
             }
 
-            string queryCheck = "SELECT ID, GameName, QuestionTime FROM Games WHERE GameCode = @GameCode AND IsPublish = 1";
+            string queryCheck = "SELECT ID, GameName, QuestionTime,IsPublish FROM Games WHERE GameCode = @GameCode";
             var record = await _db.GetRecordsAsync<GameDetails>(queryCheck, param);
             var gameCheck = record.FirstOrDefault();
 
-            if (gameCheck == null)
-            {
-                return BadRequest("המשחק קיים אך לא פורסם");
-            }
 
             var paramQuestions = new { GameID = gameCheck.ID };
             string queryQuestions = @"SELECT ID, QuestionText, QuestionPhoto FROM Questions WHERE GameID = @GameID";
