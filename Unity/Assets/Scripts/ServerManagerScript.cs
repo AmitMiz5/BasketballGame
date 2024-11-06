@@ -15,8 +15,8 @@ public class ServerManagerScript : MonoBehaviour
     [SerializeField] Sprite tempImage;
     [SerializeField] private TextMeshProUGUI codeMessage;
 
-    string projectURL = "./../"; //הנתיב לפרוייקט
-    //string projectURL = "https://localhost:7022/"; //הנתיב לפרוייקט
+    //string projectURL = "./../"; //הנתיב לפרוייקט
+    string projectURL = "https://localhost:7022/"; //הנתיב לפרוייקט
     string apiURL = "api/Unity/GetGameDetails/"; //הנתיב לקונטרולר שיצרתם
     string imagesURL = "uploadedFiles/"; //הנתיב לתיקיית התמונות
 

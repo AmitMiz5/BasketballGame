@@ -4,6 +4,7 @@
 @using template.Shared.Models.Game;
 @using template.Shared.Models.Question;
 
+
 <EditForm Model="questionToAdd" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
     <div style="margin-bottom:25px;">
@@ -16,6 +17,7 @@
             @(questionToAdd.QuestionPhoto != null ? "החלף תמונה" : "בחר תמונה")
         </label>
         <InputFile id="FileInputID" OnChange="UploadQuestionImg" hidden />
+
 
         @if (!string.IsNullOrEmpty(questionToAdd.QuestionPhoto))
         {
@@ -99,8 +101,12 @@
             display: none;
         }
     </style>
+    @* שינוי- הוספת קומפוננטה *@
+    <Tooltip TooltipText="@TooltipText">
+        <input type="submit" value="שמירה" disabled="@(!IsFormValid)" />
+    </Tooltip>
 
-    <input type="submit" value="שמירה" disabled="@(!IsFormValid)" />
+        
 </EditForm>
 
 @if (QuestionId != null)
@@ -144,6 +150,8 @@
     string msg = "";
     string msgType = "info"; // Message type for the toast
 
+    private string TooltipText { get; set; } = string.Empty;
+
     private void OnCheckboxChanged(int index, object isChecked)
     {
         answers[index].IsCorrect = (bool)isChecked;
@@ -163,6 +171,7 @@
         // ToDo: delete from folder
     }
 
+    // פונקציה חדשה לתנאים בקומפוננטה
     private bool IsFormValid
     {
         get
@@ -171,7 +180,30 @@
             int filledAnswers = answers.Count(a => !string.IsNullOrWhiteSpace(a.AnswerContent));
             bool hasAtLeastTwoAnswers = filledAnswers >= 2;
             bool hasSelectedCorrectAnswer = answers.Any(a => a.IsCorrect && !string.IsNullOrWhiteSpace(a.AnswerContent));
-            return questionTextFilled && hasAtLeastTwoAnswers && hasSelectedCorrectAnswer;
+
+            if (!questionTextFilled && !hasAtLeastTwoAnswers)
+            {
+                TooltipText = "יש למלא תוכן בשאלה ולפחות 2 מסיחים";
+                return false;
+            }
+            if (!hasAtLeastTwoAnswers)
+            {
+                TooltipText = "יש למלא לפחות 2 מסיחים";
+                return false;
+            }
+            if (!questionTextFilled)
+            {
+                TooltipText = "יש למלא טקסט בשאלה";
+                return false;
+            }
+            if (!hasSelectedCorrectAnswer)
+            {
+                TooltipText = "יש לבחור בתשובה הנכונה";
+                return false;
+            }
+
+            TooltipText = string.Empty; // No tooltip if form is valid
+            return true;
         }
     }
 
