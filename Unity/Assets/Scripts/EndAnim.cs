@@ -33,7 +33,7 @@ public class EndAnim : MonoBehaviour
 
     public void PlayCloseAnim() //פונקציה להתחלת אנימציית פתיחה
     {
-
+        gameManager.pauseButton.SetActive(false);//הסתרת כפתור השהייה
         allGameManager.SetActive(false);
         gameManager.madHitkadmut.SetActive(false);//הסתרת מד התקדמות
         player.SetActive(false);

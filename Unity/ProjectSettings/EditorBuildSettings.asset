@@ -11,10 +11,4 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/triangleProject.unity
     guid: cf79609643e10434083b6b05bbde3516
-  - enabled: 1
-    path: Assets/Scenes/endAnim.unity
-    guid: 6c0f65bc09cec442dba1554b605fe636
-  - enabled: 1
-    path: Assets/Scenes/openAnim.unity
-    guid: b13a3880cb94146d69fed7e443aafc4c
   m_configObjects: {}

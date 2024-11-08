@@ -23,7 +23,7 @@ public class GameManagerScript : MonoBehaviour
     [SerializeField] public TextMeshProUGUI timer; // טקסט של טיימר עבור כל שאלה
     [SerializeField] public GameObject nextBtn; // כפתור שאלה הבאה
     [SerializeField] private TextMeshProUGUI nextBtnTxt; // טקסט של כפתור שאלה הבאה
-    [SerializeField] private GameObject pauseButton; // כפתור להשהיית המשחק
+    [SerializeField] public GameObject pauseButton; // כפתור להשהיית המשחק
     [SerializeField] private GameObject continueButton; // כפתור לחזרה למשחק
     [SerializeField] private float distance; // מרחק בין אובייקטים
     [SerializeField] private EndScript endSpcript; // קישור לסקירפט סיום
@@ -70,8 +70,11 @@ public class GameManagerScript : MonoBehaviour
     public OpenAnim openAnim; //  קישור לסקריפט אנימציית פתיחה
 
 
+
+
     void Start() // פונקצית התחילה
     {
+
         bgSoundSource.clip = bgSound; // הגדרת מקור השמע לסאונד רקע
         SetAoudioBG(); // קישור לפונקציה המפעילה את הסאונד
         if (questionImageScript != null)

@@ -18,6 +18,7 @@ public class EndScript : MonoBehaviour
     public GameManagerScript gameManager; // קישור לסקריפט גיים מנג׳ר  
     public void EndGameScreen() // פונקציה המפעילה את האובייקטים של מסך סיכום המשחק 
     {
+        gameManager.pauseButton.SetActive(false);//הסתרת כפתור השהייה
         gameManager.madHitkadmut.SetActive(false);//הסתרת מד התקדמות
         allEndScreen.SetActive(true);// כלל האובייקטים יופיעו על המסך
         TimeSpan elapsedTime = DateTime.Now - gameManager.startTime; // חישוב הזמן הכולל של המשחק
