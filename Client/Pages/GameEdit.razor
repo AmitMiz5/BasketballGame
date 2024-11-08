@@ -34,7 +34,7 @@
     <div style="flex: 0.4; margin-left: 20px; margin-top: 20px;">
         <style>
             .styled-button {
-                background-color: #D99E5E; /* Light orange color */
+                background-color: #D99E5E; 
                 color: white;
                 padding: 10px 20px;
                 border: none;
@@ -44,7 +44,7 @@
             }
 
                 .styled-button:hover {
-                    background-color: #c68c53; /* Darker shade on hover */
+                    background-color: #c68c53;
                 }
         </style>
 
@@ -61,7 +61,6 @@
                     </div>
 
                     <div style="display: flex; gap: 10px;">
-                        <!-- Flex container to align buttons side-by-side -->
                         <Tooltip TooltipText="עריכת השאלה">
                             <button style="border: none; padding: 5px; border-radius: 3px;"
                                     @onclick="() => LoadQuestionDetails(question.ID)">
@@ -98,7 +97,6 @@
     </div>
 </div>
 
-<!-- Toast Component Placed Here -->
 <ToastComponent Type="@msgType" Message="@msg" @key="toastKey" />
 
 @code {
@@ -106,8 +104,8 @@
     public int gameId { get; set; }
 
     string msg = "";
-    string msgType = "info"; // Default message type
-    Guid toastKey = Guid.NewGuid(); // Unique key for the toast
+    string msgType = "info";
+    Guid toastKey = Guid.NewGuid(); 
 
     List<QuestionDetails> MyQuestionList = new List<QuestionDetails>();
     QuestionData selectedQuestion;
@@ -136,10 +134,7 @@
         {
             game = await response.Content.ReadFromJsonAsync<GameTable>();
         }
-        else
-        {
-            // Handle error if needed
-        }
+
     }
 
     public async Task LoadQuestions()
@@ -152,6 +147,10 @@
         if (response.IsSuccessStatusCode)
         {
             MyQuestionList = await response.Content.ReadFromJsonAsync<List<QuestionDetails>>();
+        }
+        else
+        {
+            MyQuestionList = new List<QuestionDetails>();
         }
 
     }
@@ -180,6 +179,7 @@
             ShowToast(new ToastMessage { Message = "שאלה נמחקה בהצלחה", Type = "success" });
             MyQuestionList.RemoveAll(q => q.ID == questionID); 
             StateHasChanged();
+            await LoadQuestions();
         }
         else
         {

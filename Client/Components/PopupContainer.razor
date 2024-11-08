@@ -1,10 +1,13 @@
 ﻿
 <div class="popup-overlay" @onclick="OnClose">
     <div class="popup-container" @onclick:stopPropagation="true">
-        <img src="/Icons/BgPopUp.png" alt="Popup Background" />
+        <img src="/Icons/BgPopUp.png" class="popup-container-img" alt="Popup Background" />
         <button class="close-button" @onclick="OnClose">X</button>
         <div class="popup-content">
-            <h2>@Title</h2>
+            @if (!string.IsNullOrEmpty(@Title))
+            {
+                <h2>@Title</h2>
+            }
             <div>@Body</div>
         </div>
     </div>
@@ -30,7 +33,7 @@
         max-width: 600px;
     }
 
-        .popup-container img {
+        .popup-container-img {
             width: 100%;
             height: auto;
             border-radius: 8px;
@@ -39,7 +42,7 @@
     .close-button {
         position: absolute;
         top: 10px;
-        left: 10px; /* Moved to the left */
+        left: 10px; 
         background-color: transparent;
         color: #fff;
         font-size: 20px;
@@ -76,7 +79,7 @@
 
 @code {
     [Parameter]
-    public string Title { get; set; } = "Default Title";
+    public string Title { get; set; } = "";
 
     [Parameter]
     public RenderFragment Body { get; set; } = null;

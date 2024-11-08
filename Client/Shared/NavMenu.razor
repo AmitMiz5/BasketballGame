@@ -25,23 +25,31 @@
 @if (isHowToPlayPopupVisible)
 {
                  <PopupContainer 
-                    Title="איך משחקים?"
                     OnClose="HideHowToPlayPopup" >
                         <Body>
-            <div style="width:85%;">
-       <div style="text-align:right">
-           הזיזו את השחקנית באמצעות החצים וקלעו את התשובה הנכונה לסל באמצעות הרווח.
-       </div>
-       <div style="display:flex;">
-                    <img src="Icons/HowToPlayKeyBord.png" alt="howtoplay-keyboard"  />
-                    <img src="Icons/HowToPlaySpace.png" alt="howtoplay-space"  />
-       </div>
+            <div style="display:flex; justify-content:center; flex-direction:row-reverse;">
+                <img src="Icons/Shoula.png" alt="howtoplay-keyboard" />
+                <div style="display:flex;justify-content:center;flex-direction:column;">
+                    <h2>איך משחקים?</h2>
+                    <br />
 
-       <div style="text-align:right;margin-top:5px;">
-                    <span>על מנת להשעות את המשחק ולצאת להפסקת מחצית, נלחץ על כפתור העצור</span>
-       </div>
-                <div style="text-align:right;margin-top:5px;">
-                    <span>על מנת לכבות את מוזיקת הרקע נלחץ על כפתור הרמקול</span>
+                    <div style="text-align:right">
+                        הזיזו את השחקנית באמצעות החצים וקלעו את התשובה הנכונה לסל באמצעות הרווח.
+                    </div>
+                    <div style="display:flex;">
+                        <img src="Icons/HowToPlayKeyBord.png" alt="howtoplay-keyboard" style="width:35%" />
+                        <img src="Icons/HowToPlaySpace.png" alt="howtoplay-space" style="width:35%" />
+                    </div>
+                    <br />
+
+                    <div style="text-align:right;margin-top:5px;">
+                        <img src="Icons/HowToPlayPause.png" alt="howtoplay-pause" style="width:24px ; height:26px" />
+                        <span>על מנת להשעות את המשחק ולצאת להפסקת מחצית, נלחץ על כפתור העצור</span>
+                    </div>
+                                        <br />
+                    <div style="text-align:right;margin-top:5px;">
+                        <span>על מנת לכבות את מוזיקת הרקע נלחץ על כפתור הרמקול</span>
+                    </div>
                 </div>
                             </div>
                         </Body>

@@ -1,5 +1,6 @@
 ﻿@inject HttpClient Http
 
+@inject HttpClient Http
 <div>
     @if (OpenButton != null)
     {
@@ -9,22 +10,132 @@
     }
 </div>
 
-<div style="display: @(isPopupOpen ? "flex" : "none"); justify-content: center; align-items: center; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;color:black;">
-    <div style="background-color: white; padding: 20px; border-radius: 8px; width: 300px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-        <span style="cursor: pointer; float: right; font-size: 20px;" @onclick="ClosePopup">&times;</span>
-        <h3 style="text-align: center;">@TitleText</h3>
-        <p style="text-align: center;">@BodyText</p>
+<div class="confirm-popup-overlay" style="display: @(isPopupOpen ? "flex" : "none");">
+    <div class="confirm-popup-container">
+        <img src="/Icons/BgSmallPopUp.png" alt="Popup Background Image">
 
-        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-            <button @onclick="Cancel" style="width: 45%; padding: 10px; background-color: #d1d5db; color: black; border: none; border-radius: 5px; cursor: pointer;">
-                @CancelButtonText
-            </button>
-            <button @onclick="Confirm" style="width: 45%; padding: 10px; background-color: #f1a544; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                @ConfirmButtonText
-            </button>
+        <button class="confirm-close-button" @onclick="ClosePopup">X</button>
+
+        <div class="confirm-popup-content">
+
+            <div class="confirm-popup-text">
+                <h3 class="confirm-popup-title">@TitleText</h3>
+                <p class="confirm-popup-body">@BodyText</p>
+
+            </div>
+            <div class="confirm-button-container">
+                <button @onclick="Cancel" class="confirm-cancel-button">
+                    @CancelButtonText
+                </button>
+                <button @onclick="Confirm" class="confirm-confirm-button">
+                    @ConfirmButtonText
+                </button>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .confirm-popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .confirm-popup-container {
+        position: relative;
+        width: auto;
+        max-width: 600px;
+        height: auto;
+        text-align: center;
+        border-radius: 8px;
+    }
+
+        .confirm-popup-container img {
+            width: 80%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+    .confirm-close-button {
+        position: absolute;
+        top: 10px;
+        left: 80px;
+        background-color: transparent;
+        color: #fff;
+        font-size: 20px;
+        border: none;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .confirm-popup-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        text-align: center;
+    }
+
+    .confirm-popup-text{
+        display:flex;
+        flex-direction:column;
+        margin-top:40px;
+    }
+    .confirm-popup-title {
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0;
+        padding-bottom: 10px;
+    }
+
+    .confirm-popup-body {
+        font-size: 16px;
+        line-height: 1.5;
+        padding-bottom: 20px;
+    }
+
+    .confirm-button-container {
+        margin-top: auto;
+        margin-bottom:30px;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 20px 0;
+    }
+
+    .confirm-cancel-button, .confirm-confirm-button {
+        width: 45%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .confirm-cancel-button {
+        background-color: #d1d5db;
+        color: black;
+    }
+
+    .confirm-confirm-button {
+        background-color: #f1a544;
+        color: white;
+    }
+</style>
+
 
 @code {
     [Parameter]

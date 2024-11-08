@@ -91,12 +91,6 @@
         }
     </div>
 
-    @if (!string.IsNullOrEmpty(msg))
-    {
-        <p>@msg</p>
-        <input type="button" value="reload" @onclick=Navigate />
-    }
-    
     <BasketballSpinner isSpinnerVisible=isLoadingGames />
 }
 
