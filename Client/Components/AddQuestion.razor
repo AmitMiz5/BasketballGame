@@ -1,9 +1,9 @@
-﻿@inject HttpClient Http;
-@inject NavigationManager Nav;
-@using template.Shared.Models.Answer;
-@using template.Shared.Models.Game;
-@using template.Shared.Models.Question;
-
+﻿@inject HttpClient Http
+@inject NavigationManager Nav
+@using template.Shared.Models.Answer
+@using template.Shared.Models.Game
+@using template.Shared.Models.Question
+@using template.Shared.Models
 
 <EditForm Model="questionToAdd" OnValidSubmit="HandleValidSubmit">
     <DataAnnotationsValidator />
@@ -17,7 +17,6 @@
             @(questionToAdd.QuestionPhoto != null ? "החלף תמונה" : "בחר תמונה")
         </label>
         <InputFile id="FileInputID" OnChange="UploadQuestionImg" hidden />
-
 
         @if (!string.IsNullOrEmpty(questionToAdd.QuestionPhoto))
         {
@@ -42,7 +41,11 @@
     {
         var index = i;
 
-        <div class="answer-container" style="margin-bottom: 15px; display: flex; border: 1px dashed #000; border-radius: 8px; padding: 0; background-color: #e0f7fa;">
+        <div class="answer-container" style="margin-bottom: 15px; display: flex; border: 1px dashed #000; border-radius: 8px; padding: 0; background-color: #e0f7fa;" @onclick='() => {
+            if(string.IsNullOrEmpty(answers[index].AnswerContent)){
+                answers[index].AnswerContent = "";
+            }
+        }'>
             <div style="flex: 0 0 auto; padding-right: 10px;">
                 <input type="checkbox" id="@($"isCorrect-{index}")"
                        checked="@answers[index].IsCorrect"
@@ -57,15 +60,26 @@
                 <ValidationMessage For="@(() => answers[index].AnswerContent)" />
             </div>
 
-            <div class="answer-section" style="flex: 1; padding: 20px; display: flex; align-items: center; justify-content: center;" >
+            <div class="answer-section" style="flex: 1; padding: 20px; display: flex; align-items: center; justify-content: center;">
                 <InputFile id="@($"answerImage-{index}")" OnChange="@(e => UploadAnswerImg(index, e))" />
                 @if (answers[index].IsPhoto)
                 {
                     <img src="/uploadedFiles/@answers[index].AnswerContent" alt="Uploaded Answer Image" style="max-width: 100%; max-height: 100px; border-radius: 4px;" />
                 }
+
                 <span class="hover-icon image-icon" style="font-size: 2em; position: absolute;">🖼️</span>
             </div>
+
+            @if (answers[index].AnswerContent != null)
+            {
+                <span class="remove-image" style="position: absolute; top: 0; left: 0; background-color: red; color: white; padding: 1px 2px; cursor: pointer;" @onclick:stopPropagation @onclick='() => {answers[index].AnswerContent=null;answers[index].IsPhoto=false;}'>X</span>
+            }
         </div>
+    }
+
+    @if (QuestionId != null && answers.Count < 6 && !string.IsNullOrEmpty(answers[answers.Count - 1].AnswerContent))
+    {
+        <div @onclick='() => { answers.Add(new AnswerToAdd()); }'>הוסף תשובה</div>
     }
 
     <style>
@@ -85,10 +99,10 @@
             padding: 20px;
         }
 
-        /* Divider between the two sections */
-        .answer-section:first-child {
-            border-right: 1px solid #ddd;
-        }
+            /* Divider between the two sections */
+            .answer-section:first-child {
+                border-right: 1px solid #ddd;
+            }
 
         .hover-icon {
             display: inline;
@@ -100,13 +114,18 @@
         .answer-section:hover .image-icon {
             display: none;
         }
-    </style>
-    @* שינוי- הוספת קומפוננטה *@
-    <Tooltip TooltipText="@TooltipText">
-        <input type="submit" value="שמירה" disabled="@(!IsFormValid)" />
-    </Tooltip>
 
-        
+        .remove-image {
+            font-weight: bold;
+            border-radius: 50%;
+            padding: 2px 5px;
+        }
+    </style>
+
+    <!-- Submit Button with Tooltip -->
+    <Tooltip TooltipText="@TooltipText">
+        <input type="submit" value="שמירה" disabled="@(!IsFormValid)" style="padding: 10px 20px; border: none; border-radius: 8px; background-color: #4CAF50; color: white; cursor: pointer;" />
+    </Tooltip>
 </EditForm>
 
 @if (QuestionId != null)
@@ -117,12 +136,10 @@
                   CancelButtonText="בטל"
                   OnConfirmClick="() => HandleDeleteQuestion()">
         <OpenButton>
-            <button>מחיקת שאלה</button>
+            <button style="padding: 10px 20px; border: none; border-radius: 8px; background-color: #f44336; color: white; cursor: pointer;">מחיקת שאלה</button>
         </OpenButton>
     </ConfirmPopup>
 }
-
-<ToastComponent Type="@msgType" @bind-Message="msg" />
 
 @code {
     [Parameter]
@@ -132,7 +149,7 @@
     public int? QuestionId { get; set; }
 
     [Parameter]
-    public EventCallback OnQuestionUpdated { get; set; } // יצירת מופע על ביצוע שינוי
+    public EventCallback OnQuestionUpdated { get; set; } // Callback to notify parent of updates
 
     [Parameter]
     public QuestionToAdd questionToAdd { get; set; }
@@ -141,10 +158,12 @@
     public List<AnswerToAdd> answers { get; set; }
 
     [Parameter]
-    public bool isEditingQuestion { get; set; }
+    public EventCallback<ToastMessage> OnShowToast { get; set; } // Callback to show toast in parent
 
-    string myFileImage = ""; // משתנה לתמונה בבסיס 64
-    long maxFileSize = 4194304; // גודל מקסימלי לקובץ
+    private Guid toastKey = Guid.NewGuid();
+
+    string myFileImage = ""; // Variable for base64 image
+    long maxFileSize = 4194304; // Max file size (4 MB)
     private string imageBase64 = "";
 
     string msg = "";
@@ -171,7 +190,7 @@
         // ToDo: delete from folder
     }
 
-    // פונקציה חדשה לתנאים בקומפוננטה
+    // Function to validate the form
     private bool IsFormValid
     {
         get
@@ -210,7 +229,6 @@
     private async Task UploadQuestionImg(InputFileChangeEventArgs e)
     {
         var imageFiles = e.GetMultipleFiles();
-        msg = "";
         foreach (var file in imageFiles)
         {
             if (file.Size <= maxFileSize)
@@ -220,6 +238,10 @@
                 var imageBase64 = Convert.ToBase64String(buffer);
 
                 questionToAdd.QuestionPhoto = imageBase64;
+            }
+            else
+            {
+                await OnShowToast.InvokeAsync(new ToastMessage { Message = "הקובץ גדול מדי. הגודל המקסימלי הוא 4MB.", Type = "error" });
             }
         }
     }
@@ -248,6 +270,14 @@
                     answers[index].IsPhoto = true; // Mark that an image is uploaded
                     answers[index].AnswerContent = fileName; // Assuming you have a property for the image path
                 }
+                else
+                {
+                    await OnShowToast.InvokeAsync(new ToastMessage { Message = "Error uploading answer image.", Type = "error" });
+                }
+            }
+            else
+            {
+                await OnShowToast.InvokeAsync(new ToastMessage { Message = "הקובץ גדול מדי. הגודל המקסימלי הוא 4MB.", Type = "error" });
             }
         }
     }
@@ -256,9 +286,9 @@
     {
         questionToAdd.GameID = GameId;
         GameTable game = new GameTable
-        {
-            LastUpdated = DateTime.Now
-        };
+            {
+                LastUpdated = DateTime.Now
+            };
 
         if (!string.IsNullOrEmpty(questionToAdd.QuestionPhoto) && !questionToAdd.QuestionPhoto.Contains(".png"))
         {
@@ -271,8 +301,7 @@
             }
             else
             {
-                msg = "Error saving image.";
-                msgType = "error";
+                await OnShowToast.InvokeAsync(new ToastMessage { Message = "Error saving image.", Type = "error" });
                 return; // Exit if the image upload fails
             }
         }
@@ -297,16 +326,16 @@
 
         if (questionRes.IsSuccessStatusCode)
         {
-            msgType = "success";
             if (QuestionId != null)
             {
-                msg = "השאלה עודכנה בהצלחה";
+                await OnShowToast.InvokeAsync(new ToastMessage { Message = "השאלה עודכנה בהצלחה", Type = "success" });
             }
             else
             {
-                msg = "השאלה התווספה בהצלחה";
+                await OnShowToast.InvokeAsync(new ToastMessage { Message = "השאלה התווספה בהצלחה", Type = "success" });
             }
-            await OnQuestionUpdated.InvokeAsync(); 
+
+            await OnQuestionUpdated.InvokeAsync();
             questionToAdd.QuestionText = "";
             questionToAdd = new QuestionToAdd();
             answers = new List<AnswerToAdd>
@@ -323,39 +352,34 @@
         {
             string error = await questionRes.Content.ReadAsStringAsync();
             ShowError(error);
-            msgType = "error";
             if (QuestionId != null)
             {
-                msg = "תקלה בעריכת שאלה";
+                await OnShowToast.InvokeAsync(new ToastMessage { Message = "תקלה בעריכת שאלה: " + msg, Type = "error" });
             }
             else
             {
-                msg = "תקלה בהוספת שאלה";
+                await OnShowToast.InvokeAsync(new ToastMessage { Message = "תקלה בהוספת שאלה: " + msg, Type = "error" });
             }
         }
     }
 
-    private async void HandleDeleteQuestion()
+    private async Task HandleDeleteQuestion()
     {
         var questionRes = await Http.DeleteAsync($"api/GameData/deleteQuestion/{GameId}/{QuestionId}");
         if (questionRes.IsSuccessStatusCode)
         {
-            msgType = "success";
-            msg = "שאלה נמחקה בהצלחה";
+            await OnShowToast.InvokeAsync(new ToastMessage { Message = "שאלה נמחקה בהצלחה", Type = "success" });
         }
         else
         {
-            msgType = "error";
-            msg = "תקלה במחיקת שאלה, נסה שנית";
+            await OnShowToast.InvokeAsync(new ToastMessage { Message = "תקלה במחיקת שאלה, נסה שנית", Type = "error" });
         }
 
         await OnQuestionUpdated.InvokeAsync();
-
     }
 
     void ShowError(string error)
     {
-        msgType = "error";
         switch (error)
         {
             case "No games for this user":
@@ -396,9 +420,5 @@
                 break;
         }
     }
-
-    void Navigate()
-    {
-        Nav.NavigateTo("./", true);
-    }
 }
+

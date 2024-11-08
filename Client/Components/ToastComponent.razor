@@ -1,6 +1,6 @@
-﻿@if (!string.IsNullOrEmpty(Message))
+﻿@if (isVisible)
 {
-    <div class="toast @Type @(isVisible ? "show" : "")" @key="toastId">
+    <div class="toast @Type @(isVisible ? "show" : "")" @key="ToastKey">
         <div class="toast-content">
             @if (Type == "success")
             {
@@ -50,6 +50,7 @@
     .toast-content {
         display: flex;
         align-items: center;
+        position: relative; /* Ensure icons and text are positioned correctly */
     }
 
         .toast-content .icon {
@@ -77,33 +78,28 @@
 
 @code {
     private bool isVisible = false;
-    private Guid toastId;
 
     [Parameter]
     public string Message { get; set; }
 
     [Parameter]
-    public EventCallback<string> MessageChanged { get; set; }
+    public string Type { get; set; } = "info"; // "success", "info", "error"
 
     [Parameter]
-    public string Type { get; set; } = "info"; // "success", "info", "error"
+    public Guid ToastKey { get; set; } // Unique key from parent to trigger re-render
 
     protected override void OnParametersSet()
     {
         if (!string.IsNullOrEmpty(Message))
         {
             isVisible = true;
-            toastId = Guid.NewGuid(); 
-            StateHasChanged();
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(5000);
-                await InvokeAsync(async () =>
+                await Task.Delay(5000); // Duration the toast is visible
+                await InvokeAsync(() =>
                 {
                     isVisible = false;
-                    Message = "";
-                    await MessageChanged.InvokeAsync(Message);
                     StateHasChanged();
                 });
             });

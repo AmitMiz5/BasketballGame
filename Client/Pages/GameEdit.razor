@@ -1,9 +1,11 @@
 ﻿@page "/GameEdit/{gameId:int}"
 @using template.Shared.Models.Answer
-@using template.Shared.Models.Game;
-@using template.Shared.Models.Question;
-@inject HttpClient Http;
-@inject NavigationManager Nav;
+@using template.Shared.Models.Game
+@using template.Shared.Models.Question
+@using template.Shared.Models
+
+@inject HttpClient Http
+@inject NavigationManager Nav
 
 <div style="display: flex;">
     <div style="flex: 1; margin-right: 20px;">
@@ -12,11 +14,20 @@
 
         @if (selectedQuestion != null)
         {
-            <AddQuestion GameId="@gameId" QuestionId="@selectedQuestion.QuestionId" questionToAdd="selectedQuestion.questionToAdd" answers="selectedQuestion.answers" OnQuestionUpdated="@(async () => await LoadQuestions())" />
+            <AddQuestion GameId="@gameId"
+                         QuestionId="@selectedQuestion.QuestionId"
+                         questionToAdd="selectedQuestion.questionToAdd"
+                         answers="selectedQuestion.answers"
+                         OnQuestionUpdated="@(async () => await LoadQuestions())"
+                         OnShowToast="@(toastMessage => ShowToast(toastMessage))" />
         }
         else
         {
-            <AddQuestion GameId="@gameId" questionToAdd="new QuestionToAdd()" answers="new List<AnswerToAdd> { new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd() }" OnQuestionUpdated="@(async () => await LoadQuestions())" />
+            <AddQuestion GameId="@gameId"
+                         questionToAdd="new QuestionToAdd()"
+                         answers="new List<AnswerToAdd> { new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd() }"
+                         OnQuestionUpdated="@(async () => await LoadQuestions())"
+                         OnShowToast="@(toastMessage => ShowToast(toastMessage))" />
         }
     </div>
 
@@ -38,8 +49,7 @@
         </style>
 
         <button class="styled-button" @onclick="NavigateToGamesList">למשחקים שלי</button>
-        <PublishButton game="game"/>
-
+        <PublishButton game="game" />
 
         @if (MyQuestionList != null && MyQuestionList.Count > 0)
         {
@@ -74,28 +84,31 @@
                         </ConfirmPopup>
                     </div>
                 </div>
-
-                 
-
             }
+
             @if (selectedQuestion != null)
             {
-                <button @onclick="()=>{selectedQuestion=null;}"> הוספת שאלה חדשה</button>
-
+                <button @onclick="() => { selectedQuestion = null; }"> הוספת שאלה חדשה</button>
             }
         }
         else
         {
-        <p>אין שאלות למשחק</p>
+            <p>אין שאלות למשחק</p>
         }
     </div>
 </div>
+
+<!-- Toast Component Placed Here -->
+<ToastComponent Type="@msgType" Message="@msg" @key="toastKey" />
 
 @code {
     [Parameter]
     public int gameId { get; set; }
 
     string msg = "";
+    string msgType = "info"; // Default message type
+    Guid toastKey = Guid.NewGuid(); // Unique key for the toast
+
     List<QuestionDetails> MyQuestionList = new List<QuestionDetails>();
     QuestionData selectedQuestion;
 
@@ -123,11 +136,15 @@
         {
             game = await response.Content.ReadFromJsonAsync<GameTable>();
         }
+        else
+        {
+            // Handle error if needed
+        }
     }
-
 
     public async Task LoadQuestions()
     {
+        selectedQuestion = null;
         gameDto.GameID = gameId;
 
         var response = await Http.PostAsJsonAsync("api/GameData/GetQuestionList", gameDto);
@@ -139,14 +156,13 @@
         }
         else
         {
-            msg = "Error retrieving questions: " + error;
+            ShowToast(new ToastMessage { Message = "Error retrieving questions: " + error, Type = "error" });
         }
-
     }
 
     public async Task LoadQuestionDetails(int questionID)
     {
-        var response = await Http.GetAsync("api/GameData/getQuestion/"+questionID);
+        var response = await Http.GetAsync("api/GameData/getQuestion/" + questionID);
         string error = await response.Content.ReadAsStringAsync();
 
         if (response.IsSuccessStatusCode)
@@ -156,7 +172,7 @@
         }
         else
         {
-            msg = "Error retrieving question details: " + error;
+            ShowToast(new ToastMessage { Message = "Error retrieving question details: " + error, Type = "error" });
         }
     }
 
@@ -165,14 +181,22 @@
         var response = await Http.DeleteAsync($"api/GameData/deleteQuestion/{gameId}/{questionID}");
         if (response.IsSuccessStatusCode)
         {
-            msg = "שאלה נמחקה בהצלחה";
-            MyQuestionList.RemoveAll(q => q.ID == questionID); // Remove the deleted question from the list
-            StateHasChanged(); // Update UI
+            ShowToast(new ToastMessage { Message = "שאלה נמחקה בהצלחה", Type = "success" });
+            MyQuestionList.RemoveAll(q => q.ID == questionID); 
+            StateHasChanged();
         }
         else
         {
-            msg = "תקלה במחיקת שאלה, נסה שנית";
+            ShowToast(new ToastMessage { Message = "תקלה במחיקת שאלה, נסה שנית", Type = "error" });
         }
+    }
+
+    private void ShowToast(ToastMessage toastMessage)
+    {
+        msg = toastMessage.Message;
+        msgType = toastMessage.Type;
+        toastKey = Guid.NewGuid(); 
+        StateHasChanged();
     }
 
     private class QuestionData
