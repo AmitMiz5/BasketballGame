@@ -1,0 +1,86 @@
+﻿
+<div class="popup-overlay" @onclick="OnClose">
+    <div class="popup-container" @onclick:stopPropagation="true">
+        <img src="/Icons/BgPopUp.png" alt="Popup Background" />
+        <button class="close-button" @onclick="OnClose">X</button>
+        <div class="popup-content">
+            <h2>@Title</h2>
+            <div>@Body</div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .popup-container {
+        position: relative;
+        width: 60%;
+        max-width: 600px;
+    }
+
+        .popup-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        left: 10px; /* Moved to the left */
+        background-color: transparent;
+        color: #fff;
+        font-size: 20px;
+        border: none;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .popup-content {
+        position: absolute;
+        top: 10%;
+        left: 10%;
+        right: 10%;
+        bottom: 10%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-align: center;
+    }
+
+        .popup-content h2 {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .popup-content div {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+</style>
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = "Default Title";
+
+    [Parameter]
+    public RenderFragment Body { get; set; } = null;
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+}

@@ -96,6 +96,8 @@
         <p>@msg</p>
         <input type="button" value="reload" @onclick=Navigate />
     }
+    
+    <BasketballSpinner isSpinnerVisible=isLoadingGames />
 }
 
 @code {
@@ -105,6 +107,7 @@
 
     List<GameTable> MyGamesList = new List<GameTable>();
     string msg = "";
+    bool isLoadingGames = true;
     GameToAdd gameToAdd = new GameToAdd();
 
     private bool showWarning = false;
@@ -236,6 +239,8 @@
 
     public async Task LoadGames()
     {
+        isLoadingGames = true;
+
         // פנייה לקונטרולר ושליפת המשחקים
         var gamesRes = await Http.GetAsync("api/Table/GetUserGames");
         if (gamesRes.IsSuccessStatusCode == true)
@@ -257,6 +262,8 @@
                     break;
             }
         }
+        isLoadingGames = false;
+
     }
 
     void Navigate()

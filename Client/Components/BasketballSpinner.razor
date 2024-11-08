@@ -1,0 +1,11 @@
+﻿<div class="spinner-overlay" style="display: @(isSpinnerVisible ? "flex" : "none");">
+    <div class="spinner-container">
+        <img src="/Icons/BBall.png" alt="Basketball Spinner" class="basketball-icon" />
+        <p class="loading-text">טוען...</p>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public bool isSpinnerVisible { get; set; } = true;
+}

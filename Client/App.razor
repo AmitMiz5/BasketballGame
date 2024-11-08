@@ -1,5 +1,6 @@
 ﻿@inject HttpClient _http
 @inject NavigationManager _nav
+@inject IJSRuntime JS
 
 <Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
@@ -13,7 +14,8 @@
         }
         else
         {
-            <p>loading portelem</p>
+            <BasketballSpinner isSpinnerVisible="true" />
+
         }
 
     </Found>
@@ -26,6 +28,13 @@
 </Router>
 
 @code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("hideSpinner");
+        }
+    }
     int UserId = 0;
     protected override async Task OnInitializedAsync()
     {
