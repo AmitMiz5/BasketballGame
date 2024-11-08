@@ -1,12 +1,12 @@
 ﻿@inject HttpClient Http;
-@using template.Shared.Models.Game
+@using template.Shared.Models.Game;
+@using template.Shared.Models;
 
 <Tooltip TooltipText="הגדרות משחק">
     <button class="GamesList__action__button" @onclick="OpenPopup">
-        <img src="/Icons/SettingsIcon.svg" alt="Delete" class="GamesList__action__icon" />
+        <img src="/Icons/SettingsIcon.svg" alt="Settings" class="GamesList__action__icon" />
     </button>
 </Tooltip>
-
 
 <div style="display: @(isPopupOpen ? "flex" : "none"); justify-content: center; align-items: center; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 1000;">
     <div style="background-color: white; padding: 20px; border-radius: 8px; width: 300px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
@@ -15,7 +15,6 @@
 
         <EditForm Model="game" OnValidSubmit="SaveChanges">
             <DataAnnotationsValidator />
-            
 
             <label for="gameName">שם המשחק:</label>
             <InputText id="gameName" @bind-Value="game.GameName" style="width: 100%; margin-bottom: 10px; padding: 5px; border-radius: 4px; border: 1px solid #ccc;" />
@@ -26,14 +25,13 @@
                 <option value="30">30 שניות</option>
                 <option value="60">60 שניות</option>
                 <option value="90">90 שניות</option>
-                <option value="0">ללא הגבלה </option>
+                <option value="0">ללא הגבלה</option>
             </select>
 
             <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
                 שמור שינויים
             </button>
         </EditForm>
-
     </div>
 </div>
 
@@ -44,6 +42,8 @@
     [Parameter]
     public EventCallback OnGameUpdated { get; set; }
 
+    [Parameter]
+    public Action<ToastMessage> OnShowToast { get; set; }
 
     private bool isPopupOpen = false;
 
@@ -57,27 +57,29 @@
         isPopupOpen = false;
     }
 
-    private async void SaveChanges()
+    private async Task SaveChanges()
     {
-     
         await UpdateGame(game);
         ClosePopup();
     }
-    
 
-    private async Task UpdateGame(GameTable game) 
+    private async Task UpdateGame(GameTable game)
     {
-
         var updateGameResponse = await Http.PostAsJsonAsync("api/Table/updateGameSettings", game);
-        if (updateGameResponse.IsSuccessStatusCode == true)
+
+        if (updateGameResponse.IsSuccessStatusCode)
         {
+            if (OnGameUpdated.HasDelegate)
+            {
+                await OnGameUpdated.InvokeAsync();
+            }
 
-            await OnGameUpdated.InvokeAsync();
-
+            OnShowToast?.Invoke(new ToastMessage { Message = "המשחק עודכן בהצלחה", Type = "success" });
         }
         else
         {
-            // ToDo put error msg
+            string error = await updateGameResponse.Content.ReadAsStringAsync();
+            OnShowToast?.Invoke(new ToastMessage { Message = "שגיאה בעדכון המשחק: " + error, Type = "error" });
         }
     }
 }

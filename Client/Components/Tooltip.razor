@@ -1,12 +1,11 @@
 ﻿@inject HttpClient Http
 
-<div class="tooltip-container"
-     @onmouseover="ShowTooltipHandler"
-     @onmouseout="HideTooltipHandler">
+
+<div class="tooltip-container" @onmousemove="ShowTooltipHandler" @onmouseout="HideTooltipHandler">
     @ChildContent
     @if (ShowTooltip && !string.IsNullOrWhiteSpace(TooltipText))
     {
-        <div class="tooltip-box">
+        <div class="tooltip-box" style="top:@(TooltipPosition.Top)px; left:@(TooltipPosition.Left)px;">
             @TooltipText
         </div>
     }
@@ -19,58 +18,46 @@
     }
 
     .tooltip-box {
-        position: absolute;
-        top: -35px; /* Slightly closer to the child content */
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(107, 174, 255, 0.9); /* Softer light blue with some transparency */
-        color: #fff; /* White text for better contrast */
-        padding: 6px 10px; /* Slightly reduced padding for a gentler look */
+        position: fixed; /* Position relative to viewport */
+        background-color: rgba(107, 174, 255, 0.9);
+        color: #fff;
+        padding: 6px 10px;
         border-radius: 4px;
         white-space: nowrap;
         z-index: 1000;
         text-align: center;
         font-size: 13px;
-        font-weight: normal; /* Less bold for gentler appearance */
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); /* Soft shadow for depth */
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-
-    .tooltip-container:hover .tooltip-box {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         opacity: 1;
         visibility: visible;
     }
 
-    /* Tooltip arrow */
-    .tooltip-box::after {
-        content: "";
-        position: absolute;
-        bottom: -6px; /* Adjusted to align with new tooltip position */
-        left: 50%;
-        transform: translateX(-50%);
-        border-width: 6px;
-        border-style: solid;
-        border-color: rgba(107, 174, 255, 0.9) transparent transparent transparent; /* Matching arrow color with tooltip */
-    }
+        .tooltip-box::after {
+            content: "";
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: rgba(107, 174, 255, 0.9) transparent transparent transparent;
+        }
 </style>
 
 @code {
+    private (int Top, int Left) TooltipPosition { get; set; }
+    private bool ShowTooltip { get; set; }
+
     [Parameter]
     public RenderFragment ChildContent { get; set; } = default!;
 
     [Parameter]
     public string TooltipText { get; set; } = string.Empty;
 
-    private bool ShowTooltip { get; set; }
-
-    private void ShowTooltipHandler()
+    private void ShowTooltipHandler(MouseEventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(TooltipText))
-        {
-            ShowTooltip = true;
-        }
+        TooltipPosition = ((int)e.ClientY - 35, (int)e.ClientX);
+        ShowTooltip = true;
     }
 
     private void HideTooltipHandler()

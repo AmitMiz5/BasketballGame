@@ -1,4 +1,5 @@
 ﻿@using template.Shared.Models.Game;
+@using template.Shared.Models;
 @inject HttpClient Http;
 
 <Tooltip TooltipText="@GetTooltipText()">
@@ -7,11 +8,9 @@
     </button>
 </Tooltip>
 
-
 <style>
     .publish-button {
-        width:143px;
-
+        width: 143px;
     }
 
         .publish-button[disabled] {
@@ -45,10 +44,14 @@
     [Parameter]
     public EventCallback OnGameUpdated { get; set; }
 
+    [Parameter]
+    public Action<ToastMessage> OnShowToast { get; set; }
+
     private async Task TogglePublish()
     {
         if (!game.CanPublish)
         {
+            OnShowToast?.Invoke(new ToastMessage { Message = "לא ניתן לפרסם את המשחק הזה", Type = "error" });
             return;
         }
 
@@ -61,12 +64,6 @@
         var publishGameResponse = await Http.PostAsJsonAsync("api/Table/updateGameIsPublish", gameToSend);
         string error = await publishGameResponse.Content.ReadAsStringAsync();
 
-        if (error == "thisGameCannotBePublished")
-        {
-            game.IsPublish = false;
-            game.CanPublish = false;
-        }
-
         if (publishGameResponse.IsSuccessStatusCode)
         {
             game.IsPublish = !game.IsPublish;
@@ -75,10 +72,22 @@
             {
                 await OnGameUpdated.InvokeAsync(null);
             }
+
+            string successMessage = game.IsPublish ? "המשחק פורסם בהצלחה" : "הפרסום בוטל בהצלחה";
+            OnShowToast?.Invoke(new ToastMessage { Message = successMessage, Type = "success" });
         }
         else
         {
-            // Handle other errors if needed
+            if (error == "thisGameCannotBePublished")
+            {
+                game.IsPublish = false;
+                game.CanPublish = false;
+                OnShowToast?.Invoke(new ToastMessage { Message = "לא ניתן לפרסם את המשחק הזה", Type = "error" });
+            }
+            else
+            {
+                OnShowToast?.Invoke(new ToastMessage { Message = "שגיאה בפרסום המשחק", Type = "error" });
+            }
         }
     }
 
@@ -122,12 +131,11 @@
         }
         else if (game.IsPublish)
         {
-            return "לחץ על מנת לבטל פרסום";
+            return "לחץ כדי לבטל פרסום";
         }
         else
         {
-            return "לחץ על מנת לפרסם";
+            return "לחץ כדי לפרסם";
         }
     }
-
 }

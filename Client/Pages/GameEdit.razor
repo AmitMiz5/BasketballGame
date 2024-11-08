@@ -6,95 +6,126 @@
 
 @inject HttpClient Http
 @inject NavigationManager Nav
+<PageTitle>עריכת משחק</PageTitle>
 
-<div style="display: flex;">
-    <div style="flex: 1; margin-right: 20px;">
-        <h2>עריכת תכני המשחק</h2>
-        <PageTitle>עריכת תכני המשחק</PageTitle>
 
-        @if (selectedQuestion != null)
-        {
-            <AddQuestion GameId="@gameId"
-                         QuestionId="@selectedQuestion.QuestionId"
-                         questionToAdd="selectedQuestion.questionToAdd"
-                         answers="selectedQuestion.answers"
-                         OnQuestionUpdated="@(async () => await LoadQuestions())"
-                         OnShowToast="@(toastMessage => ShowToast(toastMessage))" />
-        }
-        else
-        {
-            <AddQuestion GameId="@gameId"
-                         questionToAdd="new QuestionToAdd()"
-                         answers="new List<AnswerToAdd> { new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd() }"
-                         OnQuestionUpdated="@(async () => await LoadQuestions())"
-                         OnShowToast="@(toastMessage => ShowToast(toastMessage))" />
-        }
-    </div>
+<div>
+    <h1 class="page__title">עריכת משחק</h1>
 
-    <div style="flex: 0.4; margin-left: 20px; margin-top: 20px;">
-        <style>
-            .styled-button {
-                background-color: #D99E5E; 
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 8px;
-                font-size: 16px;
-                cursor: pointer;
-            }
+<div style="display:flex;margin-top:30px;">
+        <div style="flex: 1; margin-right: 20px;">
 
-                .styled-button:hover {
-                    background-color: #c68c53;
-                }
-        </style>
-
-        <button class="base-button" @onclick="NavigateToGamesList">חזרה למשחקים שלי</button>
-        <PublishButton game="game" />
-
-        @if (MyQuestionList != null && MyQuestionList.Count > 0)
-        {
-            @foreach (QuestionDetails question in MyQuestionList)
-            {
-                <div style="border: 1px solid #ccc; margin: 5px; padding: 10px; display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <strong>שאלה:</strong> @question.QuestionText
-                    </div>
-
-                    <div style="display: flex; gap: 10px;">
-                        <Tooltip TooltipText="עריכת השאלה">
-                            <button style="border: none; padding: 5px; border-radius: 3px;"
-                                    @onclick="() => LoadQuestionDetails(question.ID)">
-                                <img src="/Icons/EditIcon.svg" alt="Edit" style="height: 24px; width: 24px; border: none" />
-                            </button>
-                        </Tooltip>
-
-                        <ConfirmPopup TitleText="מחיקת שאלה"
-                                      BodyText=@($"האם אתה בטוח שברצונך למחוק את שאלה '{question.QuestionText}'?")
-                                      ConfirmButtonText="מחק"
-                                      CancelButtonText="בטל"
-                                      OnConfirmClick="() => DeleteQuestion(question.ID)">
-                            <OpenButton>
-                                <Tooltip TooltipText="מחיקת שאלה">
-                                    <button style="border: none; padding: 5px; border-radius: 3px;">
-                                        <img src="/Icons/DeleteIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" />
-                                    </button>
-                                </Tooltip>
-                            </OpenButton>
-                        </ConfirmPopup>
-                    </div>
-                </div>
-            }
 
             @if (selectedQuestion != null)
             {
-                <button @onclick="() => { selectedQuestion = null; }"> הוספת שאלה חדשה</button>
+                <AddQuestion GameId="@gameId"
+                             QuestionId="@selectedQuestion.QuestionId"
+                             questionToAdd="selectedQuestion.questionToAdd"
+                             answers="selectedQuestion.answers"
+                             OnQuestionUpdated="@(async () => await LoadQuestions())"
+                             OnShowToast="@(toastMessage => ShowToast(toastMessage))" />
             }
-        }
-        else
-        {
-            <p>אין שאלות למשחק</p>
-        }
-    </div>
+            else
+            {
+                <AddQuestion GameId="@gameId"
+                             questionToAdd="new QuestionToAdd()"
+                             answers="new List<AnswerToAdd> { new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd() }"
+                             OnQuestionUpdated="@(async () => await LoadQuestions())"
+                             OnShowToast="@(toastMessage => ShowToast(toastMessage))" />
+            }
+        </div>
+
+        <div style="margin-right: 20px; margin-top: 20px;">
+  <div style="display:flex">
+                <button class="base-button" style="flex: 1;" @onclick="NavigateToGamesList">חזרה למשחקים שלי</button>
+                <PublishButton game="game" OnShowToast="ShowToast" />
+                
+
+</div>
+
+
+            <div style="border-radius: 10px; margin-top: 10px; background-color: #276075; color: white; padding: 5px 15px; display: flex; align-items: center; height: 60px; box-sizing: border-box;">
+                <div style="flex: 1; display: flex; flex-direction: column; padding-left: 10px; text-align: right;">
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 2px;">מאגר שאלות</div>
+                    <div style="display: flex; align-items: center; font-size: 12px;">
+                        @if (MyQuestionList.Count >= 10)
+                        {
+                            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: white; color: green; border-radius: 50%; width: 16px; height: 16px; font-size: 12px; margin-left: 5px;">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="0 0 24 24" width="24px" height="24px">
+                                    <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm-1.2 18L5 11.2l1.4-1.4 4.4 4.4L17.6 7l1.4 1.4L10.8 18z" />
+                                </svg>
+                            </span>
+                        }
+                        else
+                        {
+                            <span style="display: inline-flex; align-items: center; justify-content: center; background-color: white; color: red; border-radius: 50%; width: 16px; height: 16px; font-size: 8px; margin-left: 5px;">
+                                <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" width="24px" height="24px">
+                                    <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm5.656 16.242l-1.414 1.414L12 13.414l-4.242 4.242-1.414-1.414L10.586 12l-4.242-4.242 1.414-1.414L12 10.586l4.242-4.242 1.414 1.414L13.414 12l4.242 4.242z" />
+                                </svg>
+                            </span>
+                        }
+                        <span>לפרסום משחק יש ליצור לפחות 10 שאלות</span>
+                    </div>
+                </div>
+
+                <div style="font-size: 20px; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                    <div>@MyQuestionList.Count</div>
+                    <div style="font-size: 12px; padding-left: 5px;">שאלות</div>
+                </div>
+            </div>
+
+
+
+            <div style="height:65vh;position: relative;">
+               @if (MyQuestionList != null && MyQuestionList.Count > 0)
+            {
+                    <div style="height:90%;overflow-y:scroll;">
+
+                        @foreach (QuestionDetails question in MyQuestionList)
+                {
+                    <div style="background-color: #27607566;border-radius:5px; margin: 5px; padding: 5px; display: flex; align-items: center; justify-content: space-between;">
+                            <div style="width:75%;overflow: hidden;
+white-space: nowrap;
+text-overflow: ellipsis;">
+                            @question.QuestionText
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <Tooltip TooltipText="עריכת השאלה">
+                                <button style="border: none; padding: 5px; border-radius: 3px;"
+                                        @onclick="() => LoadQuestionDetails(question.ID)">
+                                    <img src="/Icons/EditIcon.svg" alt="Edit" style="height: 24px; width: 24px; border: none" />
+                                </button>
+                            </Tooltip>
+
+                            <ConfirmPopup TitleText="מחיקת שאלה"
+                                          BodyText=@($"האם אתה בטוח שברצונך למחוק את שאלה '{question.QuestionText}'?")
+                                          ConfirmButtonText="מחק"
+                                          CancelButtonText="בטל"
+                                          OnConfirmClick="() => DeleteQuestion(question.ID)">
+                                <OpenButton>
+                                    <Tooltip TooltipText="מחיקת שאלה">
+                                        <button style="border: none; padding: 5px; border-radius: 3px;">
+                                            <img src="/Icons/DeleteIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" />
+                                        </button>
+                                    </Tooltip>
+                                </OpenButton>
+                            </ConfirmPopup>
+                        </div>
+                    </div>
+                }
+                </div>
+                
+                @if (selectedQuestion != null)
+                {
+                        <button class="base-button" style="position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);" @onclick="() => { selectedQuestion = null; }"> הוספת שאלה חדשה</button>
+
+                }
+            }
+       </div>
+        
+        </div>
+</div>
 </div>
 
 <ToastComponent Type="@msgType" Message="@msg" @key="toastKey" />

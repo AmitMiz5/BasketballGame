@@ -1,14 +1,13 @@
 ﻿@page "/GamesList"
 @using template.Shared.Models.Game;
+@using template.Shared.Models
 @inject HttpClient Http;
 @inject NavigationManager Nav;
 
 <PageTitle>המשחקים שלי!</PageTitle>
 
-<h1 class="GamesList__title">המשחקים שלי</h1>
+<h1 class="page__title">המשחקים שלי</h1>
 <h4 class="GamesList__subtitle">סך כל המשחקים: @MyGamesList.Count</h4>
-
-
 
 <div class="GamesLists_newgame">
     <p class="form-header">הוספת משחק חדש</p>
@@ -21,10 +20,7 @@
         </div>
         <ValidationMessage For="@(() => gameToAdd.GameName)" class="error-message" />
     </EditForm>
-
 </div>
-
-
 
 @if (MyGamesList != null)
 {
@@ -47,7 +43,7 @@
 
                     <div class="GamesList__game__actions">
                         <div>
-                            <PublishButton game="game" OnGameUpdated="@LoadGames" />
+                            <PublishButton game="game" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
                         </div>
                         <Tooltip TooltipText="עריכת המשחק">
                             <button class="GamesList__action__button" @onclick="() => NavigateToEditPage(game.ID)">
@@ -55,7 +51,7 @@
                             </button>
                         </Tooltip>
 
-                        <GameSettings game="game" OnGameUpdated="@LoadGames" />
+                        <GameSettings game="game" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
 
                         <ConfirmPopup TitleText="מחיקת משחק"
                                       BodyText=@($"האם אתה בטוח שברצונך למחוק את משחק '{game.GameName}'?")
@@ -84,23 +80,25 @@
                                 </Tooltip>
                             </OpenButton>
                         </ConfirmPopup>
-
                     </div>
                 </div>
             </div>
         }
     </div>
 
-    <BasketballSpinner isSpinnerVisible=isLoadingGames />
+    <BasketballSpinner isSpinnerVisible="isLoadingGames" />
 }
 
-@code {
+<ToastComponent Type="@msgType" Message="@msg" @key="toastKey" />
 
+@code {
     [CascadingParameter]
     public int UserId { get; set; }
 
     List<GameTable> MyGamesList = new List<GameTable>();
     string msg = "";
+    string msgType = "info";
+    Guid toastKey = Guid.NewGuid();
     bool isLoadingGames = true;
     GameToAdd gameToAdd = new GameToAdd();
 
@@ -134,17 +132,17 @@
 
     async Task CreateGame()
     {
-        //שליחת המשחק החדש לקונטרולר
         var newGameRes = await Http.PostAsJsonAsync("api/Table/addGame/", gameToAdd);
-        if (newGameRes.IsSuccessStatusCode == true)
+        if (newGameRes.IsSuccessStatusCode)
         {
             msg = "";
-            //החזרת המשחק והוספתו לרשימת המשחקים כדי שיתווסף לטבלה
             GameTable newGame = await newGameRes.Content.ReadFromJsonAsync<GameTable>();
 
             newGame.LastUpdated = DateTime.Now;
-            MyGamesList.Insert(0,newGame);
+            MyGamesList.Insert(0, newGame);
             gameToAdd.GameName = "";
+
+            ShowToast(new ToastMessage { Message = "המשחק נוצר בהצלחה", Type = "success" });
         }
         else
         {
@@ -178,16 +176,16 @@
             case "Update Failed":
                 msg = "בעיה בעדכון המשחק";
                 break;
+            default:
+                msg = "Unknown error occurred";
+                break;
         }
+        msgType = "error";
+        toastKey = Guid.NewGuid();
     }
 
     private async Task CopyGame(int originalGameId)
     {
-        // var requestData = new
-        // {
-        //     originalGameId = originalGameId
-        // };
-
         var copyGameResponse = await Http.PostAsync($"api/Table/copyGame/{originalGameId}", null);
 
         if (copyGameResponse.IsSuccessStatusCode)
@@ -199,6 +197,8 @@
             copiedGame.LastUpdated = DateTime.Now;
 
             MyGamesList.Add(copiedGame);
+
+            ShowToast(new ToastMessage { Message = "המשחק שוכפל בהצלחה", Type = "success" });
         }
         else
         {
@@ -215,14 +215,20 @@
 
         var saveResponse = await Http.PostAsJsonAsync("api/Table/deletGame", gameToDelete);
 
-        if (saveResponse.IsSuccessStatusCode == true)
+        if (saveResponse.IsSuccessStatusCode)
         {
             msg = "המשחק נמחק בהצלחה";
+            msgType = "success";
+            toastKey = Guid.NewGuid();
             await LoadGames(); // Refresh the game list after deletion
+
+            ShowToast(new ToastMessage { Message = "המשחק נמחק בהצלחה", Type = "success" });
         }
         else
         {
             msg = "בעיה במחיקה " + saveResponse.StatusCode;
+            msgType = "error";
+            toastKey = Guid.NewGuid();
         }
     }
 
@@ -235,29 +241,17 @@
     {
         isLoadingGames = true;
 
-        // פנייה לקונטרולר ושליפת המשחקים
         var gamesRes = await Http.GetAsync("api/Table/GetUserGames");
-        if (gamesRes.IsSuccessStatusCode == true)
+        if (gamesRes.IsSuccessStatusCode)
         {
-            // השמת הנתונים במופע שפתחנו
             MyGamesList = await gamesRes.Content.ReadFromJsonAsync<List<GameTable>>();
         }
         else
         {
-            // נטפל במצבים שהיוזר לא רשאי לגשת אל המידע ונאכלס משתנה של הודעה בהתאם
             string error = await gamesRes.Content.ReadAsStringAsync();
-            switch (error)
-            {
-                case "No games for this user":
-                    msg = "עדין לא יצרת משחקים... זה הזמן ליצור את הראשון :)";
-                    break;
-                case "user is not authenticated":
-                    msg = "ארעה בעיה בעת אימות המשתמש";
-                    break;
-            }
+            ShowError(error);
         }
         isLoadingGames = false;
-
     }
 
     void Navigate()
@@ -268,5 +262,13 @@
     private void NavigateToEditPage(int gameId)
     {
         Nav.NavigateTo($"/GameEdit/{gameId}");
+    }
+
+    private void ShowToast(ToastMessage toastMessage)
+    {
+        msg = toastMessage.Message;
+        msgType = toastMessage.Type;
+        toastKey = Guid.NewGuid();
+        StateHasChanged();
     }
 }
