@@ -385,7 +385,7 @@ namespace template.Server.Controllers
                      FROM Games g
                      LEFT JOIN Questions q ON g.ID = q.GameId
                      WHERE g.UserId = @UserId
-                     GROUP BY g.ID, g.GameName, g.GameCode, g.IsPublish, g.CanPublish, g.QuestionTime, g.LastUpdated";
+                     GROUP BY g.ID, g.GameName, g.GameCode, g.IsPublish, g.CanPublish, g.QuestionTime, g.LastUpdated ORDER BY g.ID DESC" ;
 
 
                 var gamesRecords = await _db.GetRecordsAsync<GameTable>(gameQuery, param);

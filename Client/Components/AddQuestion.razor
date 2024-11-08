@@ -62,9 +62,13 @@
 
             <div class="answer-section" style="flex: 1; padding: 20px; display: flex; align-items: center; justify-content: center;">
                 <InputFile id="@($"answerImage-{index}")" OnChange="@(e => UploadAnswerImg(index, e))" />
-                @if (answers[index].IsPhoto)
+                @if (answers[index].IsPhoto && answers[index].AnswerContent.Contains(".png"))
                 {
                     <img src="/uploadedFiles/@answers[index].AnswerContent" alt="Uploaded Answer Image" style="max-width: 100%; max-height: 100px; border-radius: 4px;" />
+                }
+                else if (answers[index].IsPhoto)
+                {
+                    <img src="data:image/png;base64,@answers[index].AnswerContent" alt="Uploaded Image" style="max-width: 150px;" />
                 }
 
                 <span class="hover-icon image-icon" style="font-size: 2em; position: absolute;">🖼️</span>
@@ -190,7 +194,6 @@
         // ToDo: delete from folder
     }
 
-    // Function to validate the form
     private bool IsFormValid
     {
         get
@@ -221,7 +224,7 @@
                 return false;
             }
 
-            TooltipText = string.Empty; // No tooltip if form is valid
+            TooltipText = string.Empty; 
             return true;
         }
     }
@@ -257,23 +260,8 @@
                 await file.OpenReadStream(maxFileSize).ReadAsync(buffer);
                 var imageBase64 = Convert.ToBase64String(buffer);
 
-                var uploadRequest = new
-                {
-                    ImageBase64 = imageBase64
-                };
-
-                var saveResponse = await Http.PostAsJsonAsync("api/Media/upload", uploadRequest);
-
-                if (saveResponse.IsSuccessStatusCode)
-                {
-                    string fileName = await saveResponse.Content.ReadAsStringAsync();
-                    answers[index].IsPhoto = true; // Mark that an image is uploaded
-                    answers[index].AnswerContent = fileName; // Assuming you have a property for the image path
-                }
-                else
-                {
-                    await OnShowToast.InvokeAsync(new ToastMessage { Message = "Error uploading answer image.", Type = "error" });
-                }
+                answers[index].AnswerContent = imageBase64;
+                answers[index].IsPhoto = true;
             }
             else
             {
@@ -304,6 +292,21 @@
                 await OnShowToast.InvokeAsync(new ToastMessage { Message = "Error saving image.", Type = "error" });
                 return; // Exit if the image upload fails
             }
+        }
+
+        @for (int i = 0; i < answers.Count; i++)
+        {
+            var answer = answers[i];
+            if(answer.IsPhoto && !answer.AnswerContent.Contains(".png"))
+            {
+                var uploadRequest = new { ImageBase64 = answer.AnswerContent };
+                var saveResponse = await Http.PostAsJsonAsync("api/Media/upload", uploadRequest);
+
+                if (saveResponse.IsSuccessStatusCode)
+                {
+                    answer.AnswerContent = await saveResponse.Content.ReadAsStringAsync();
+                }
+            };
         }
 
         var filledAnswers = answers.Where(a => !string.IsNullOrWhiteSpace(a.AnswerContent)).ToList();

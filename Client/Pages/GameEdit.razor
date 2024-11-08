@@ -148,16 +148,12 @@
         gameDto.GameID = gameId;
 
         var response = await Http.PostAsJsonAsync("api/GameData/GetQuestionList", gameDto);
-        string error = await response.Content.ReadAsStringAsync();
 
         if (response.IsSuccessStatusCode)
         {
             MyQuestionList = await response.Content.ReadFromJsonAsync<List<QuestionDetails>>();
         }
-        else
-        {
-            ShowToast(new ToastMessage { Message = "Error retrieving questions: " + error, Type = "error" });
-        }
+
     }
 
     public async Task LoadQuestionDetails(int questionID)

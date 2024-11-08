@@ -1,5 +1,145 @@
-﻿table {
-    width: 100%;
+﻿
+.GamesList__title {
+    font-weight: 700;
+    text-align:center;
+}
+
+
+.GamesList__subtitle {
+    margin-top:20px;
+    font-weight: 100;
+    text-align: center;
+}
+
+
+.GamesList__game__info {
+display:flex;
+flex-direction:row;
+align-items:center;
+}
+
+.GamesList__game__actions {
+    display: flex;
+    gap: 10px;
+    align-items:center;
+    justify-content:center;
+}
+
+
+.GamesList__container {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 65vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.GamesList__game__card {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+    .GamesList__game__card:hover {
+        background-color: #e6e6e6;
+    }
+
+.GamesList__game__header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.GamesList__game__name {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
     color: black;
-    background-color: white;
+}
+
+.GamesList__game__details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: black;
+}
+
+.GamesList__game__info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.GamesList__vertical-divider {
+    width: 2px;
+    height: 16px;
+    background-color: #ddd;
+    margin: 0 8px;
+}
+
+.GamesList__game__actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+
+.form-header {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+.create-game-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.form-field-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-field {
+    padding: 4px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    min-width: 200px;
+}
+
+.submit-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #FFA500;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .submit-button:hover {
+        background-color: #e59400;
+        ;
+    }
+
+.error-message {
+    color: #d9534f;
+    font-size: 0.9em;
+}
+
+.GamesLists_newgame{
+    margin-bottom:20px;
+    margin-right:20px;
 }

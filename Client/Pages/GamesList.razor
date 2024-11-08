@@ -5,42 +5,58 @@
 
 <PageTitle>המשחקים שלי!</PageTitle>
 
-<h1>המשתמש שמחובר כעת: @UserId</h1>
+<h1 class="GamesList__title">המשחקים שלי</h1>
+<h4 class="GamesList__subtitle">סך כל המשחקים: @MyGamesList.Count</h4>
 
-<p>הוספת משחק חדש</p>
-<EditForm Model="gameToAdd" OnValidSubmit="CreateGame">
-    <DataAnnotationsValidator />
-    <InputText @bind-Value="gameToAdd.GameName" />
-    <ValidationMessage For="@(() => gameToAdd.GameName)" />
 
-    <br />
-    <input type="submit" value="יצירת משחק" />
 
-</EditForm>
+<div class="GamesLists_newgame">
+    <p class="form-header">הוספת משחק חדש</p>
+    <EditForm Model="gameToAdd" OnValidSubmit="CreateGame" class="create-game-form">
+        <DataAnnotationsValidator />
+        <div class="form-field-inline">
+            <input type="text" @bind="gameToAdd.GameName" class="input-field" placeholder="הכנס שם משחק" required minlength="2" />
+
+            <input type="submit" value="יצירת משחק" class="base-button" />
+        </div>
+        <ValidationMessage For="@(() => gameToAdd.GameName)" class="error-message" />
+    </EditForm>
+
+</div>
 
 
 
 @if (MyGamesList != null)
 {
-    <div>
+    <div class="GamesList__container">
         @foreach (GameTable game in MyGamesList)
         {
-            <div style="background-color: #f9f9f9; margin-bottom: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 5px;">
-                <div>
-                    <h3 style="margin: 0; font-size: 20px;color:black;">@game.GameName</h3>
+            <div class="GamesList__game__card">
+                <div class="GamesList__game__header">
+                    <h3 class="GamesList__game__name">@game.GameName</h3>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; font-size: 14px;color:black;">
-                    <div><strong>קוד משחק |</strong> @game.GameCode</div>
-                    <div><strong>כמות שאלות |</strong> @game.QuestionsAmount</div>
-                    <div><strong>תאריך עדכון אחרון |</strong> @game.LastUpdated.ToString("dd.MM.yy HH:mm")</div>
-                    <div style="display:flex;justify-content:center;align-items:center;">
-                        <span style="margin-left:2px;margin-right:2px;"> </span>
+                <div class="GamesList__game__details">
+                    <div class="GamesList__game__info">
+                        <div><strong>קוד משחק:</strong> @game.GameCode</div>
+                        <div class="GamesList__vertical-divider"></div>
+                        <div><strong>כמות שאלות:</strong> @game.QuestionsAmount</div>
+                        <div class="GamesList__vertical-divider"></div>
+                        <div><strong>תאריך עדכון אחרון:</strong> @game.LastUpdated.ToString("dd.MM.yy HH:mm")</div>
+                    </div>
+
+                    <div class="GamesList__game__actions">
                         <div>
                             <PublishButton game="game" OnGameUpdated="@LoadGames" />
                         </div>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
+                        <Tooltip TooltipText="עריכת המשחק">
+                            <button class="GamesList__action__button" @onclick="() => NavigateToEditPage(game.ID)">
+                                <img src="/Icons/EditIcon.svg" alt="Edit" class="GamesList__action__icon" />
+                            </button>
+                        </Tooltip>
+
+                        <GameSettings game="game" OnGameUpdated="@LoadGames" />
+
                         <ConfirmPopup TitleText="מחיקת משחק"
                                       BodyText=@($"האם אתה בטוח שברצונך למחוק את משחק '{game.GameName}'?")
                                       ConfirmButtonText="מחק"
@@ -48,11 +64,10 @@
                                       OnConfirmClick="() => DeleteGame(game)">
                             <OpenButton>
                                 <Tooltip TooltipText="מחיקת משחק">
-                                    <button style="border: none; padding: 5px 10px; border-radius: 3px;">
-                                        <img src="/Icons/DeleteIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" />
+                                    <button class="GamesList__action__button">
+                                        <img src="/Icons/DeleteIcon.svg" alt="Delete" class="GamesList__action__icon" />
                                     </button>
                                 </Tooltip>
-                               
                             </OpenButton>
                         </ConfirmPopup>
 
@@ -63,25 +78,13 @@
                                       OnConfirmClick="() => CopyGame(game.ID)">
                             <OpenButton>
                                 <Tooltip TooltipText="שכפול משחק">
-                                    <button style="border: none; padding: 5px 10px; border-radius: 3px;">
-                                        <img src="/Icons/CopyIcon.svg" alt="Copy" style="height: 24px; width: 24px; border: none" />
+                                    <button class="GamesList__action__button">
+                                        <img src="/Icons/CopyIcon.svg" alt="Copy" class="GamesList__action__icon" />
                                     </button>
                                 </Tooltip>
                             </OpenButton>
                         </ConfirmPopup>
 
-                        <GameSettings game="game" OnGameUpdated="@LoadGames" />
-
-
-                        <Tooltip TooltipText="עריכת המשחק">
-                            <button style="border: none; padding: 5px 10px; border-radius: 3px;"
-                                    @onclick="() => NavigateToEditPage(game.ID)">
-                                <img src="/Icons/EditIcon.svg" alt="Edit" style="height: 24px; width: 24px; border: none" />
-                            </button>
-                        </Tooltip>
-
-
-                       
                     </div>
                 </div>
             </div>
@@ -143,7 +146,7 @@
             GameTable newGame = await newGameRes.Content.ReadFromJsonAsync<GameTable>();
 
             newGame.LastUpdated = DateTime.Now;
-            MyGamesList.Add(newGame);
+            MyGamesList.Insert(0,newGame);
             gameToAdd.GameName = "";
         }
         else

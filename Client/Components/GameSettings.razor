@@ -2,8 +2,8 @@
 @using template.Shared.Models.Game
 
 <Tooltip TooltipText="הגדרות משחק">
-    <button style="border: none; padding: 5px 10px; border-radius: 3px;" @onclick="OpenPopup">
-        <img src="/Icons/SettingsIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" />
+    <button class="GamesList__action__button" @onclick="OpenPopup">
+        <img src="/Icons/SettingsIcon.svg" alt="Delete" class="GamesList__action__icon" />
     </button>
 </Tooltip>
 
@@ -13,7 +13,6 @@
         <span style="cursor: pointer; float: right; font-size: 20px;" @onclick="ClosePopup">&times;</span>
         <h3 style="text-align: center;">עריכת משחק</h3>
 
-         <!-- Form with validation -->
         <EditForm Model="game" OnValidSubmit="SaveChanges">
             <DataAnnotationsValidator />
             
@@ -45,7 +44,6 @@
     [Parameter]
     public EventCallback OnGameUpdated { get; set; }
 
-    // private EditContext editContext;
 
     private bool isPopupOpen = false;
 
@@ -62,20 +60,18 @@
     private async void SaveChanges()
     {
      
-        Console.WriteLine($"Game Name: {game.GameName}, Question Time: {game.QuestionTime}");
-        UpdateGame(game);
+        await UpdateGame(game);
         ClosePopup();
     }
     
 
-    private async Task UpdateGame(GameTable game) // פונקציה למחיקת התמונות שנבחרו
+    private async Task UpdateGame(GameTable game) 
     {
 
         var updateGameResponse = await Http.PostAsJsonAsync("api/Table/updateGameSettings", game);
         if (updateGameResponse.IsSuccessStatusCode == true)
         {
 
-            Console.WriteLine(game.GameName + "gameName");
             await OnGameUpdated.InvokeAsync();
 
         }
@@ -84,11 +80,4 @@
             // ToDo put error msg
         }
     }
-
-   
-
-    // protected override void OnInitialized()
-    // {
-    //     editContext = new EditContext(game);
-    // }
 }
