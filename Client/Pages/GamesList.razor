@@ -10,256 +10,257 @@
 <h4 class="GamesList__subtitle">סך כל המשחקים: @MyGamesList.Count</h4>
 
 <div class="GamesLists_newgame">
-    <AddNewGame ImageSrc="/Icons/BBall.png" OnGameUpdated="@LoadGames" OnShowToast=ShowToast />
+	<AddNewGame ImageSrc="/Icons/BBall.png" OnGameUpdated="@LoadGames" OnShowToast=ShowToast />
 </div>
 
 @if (MyGamesList != null)
 {
-    <div class="GamesList__container">
-        @foreach (GameTable game in MyGamesList)
-        {
-            <div class="GamesList__game__card">
-                <div class="GamesList__game__header">
-                    <h3 class="GamesList__game__name">@game.GameName</h3>
-                </div>
+	<div class="GamesList__container">
+		@foreach (GameTable game in MyGamesList)
+		{
+			<div class="GamesList__game__card">
+				<div class="GamesList__game__header">
+					<h3 class="GamesList__game__name">@game.GameName</h3>
+				</div>
 
-                <div class="GamesList__game__details">
-                    <div class="GamesList__game__info">
-                        <div><strong>קוד משחק:</strong> @game.GameCode</div>
-                        <div class="GamesList__vertical-divider"></div>
-                        <div><strong>כמות שאלות:</strong> @game.QuestionsAmount</div>
-                        <div class="GamesList__vertical-divider"></div>
-                        <div><strong>תאריך עדכון אחרון:</strong> @game.LastUpdated.ToString("dd.MM.yy HH:mm")</div>
-                    </div>
+				<div class="GamesList__game__details">
+					<div class="GamesList__game__info">
+						<div><strong>קוד משחק:</strong> @game.GameCode</div>
+						<div class="GamesList__vertical-divider"></div>
+						<div><strong>כמות שאלות:</strong> @game.QuestionsAmount</div>
+						<div class="GamesList__vertical-divider"></div>
+						<div><strong>תאריך עדכון אחרון:</strong> @game.LastUpdated.ToString("dd.MM.yy HH:mm")</div>
+					</div>
 
-                    <div class="GamesList__game__actions">
-                        <div>
-                            <PublishButton game="game" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
-                        </div>
-                        <Tooltip TooltipText="עריכת המשחק">
-                            <button class="GamesList__action__button" @onclick="() => NavigateToEditPage(game.ID)">
-                                <img src="/Icons/EditIcon.svg" alt="Edit" class="GamesList__action__icon" />
-                            </button>
-                        </Tooltip>
+					<div class="GamesList__game__actions">
+						<div>
+							<PublishButton game="game" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
+						</div>
+						<Tooltip TooltipText="עריכת המשחק">
+							<button class="GamesList__action__button" @onclick="() => NavigateToEditPage(game.ID)">
+								<img src="/Icons/EditIcon.svg" alt="Edit" class="GamesList__action__icon" />
+							</button>
+						</Tooltip>
 
-                        <GameSettings game="game" ImageSrc="/Icons/SettingsIcon.svg" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
+						<GameSettings game="game" ImageSrc="/Icons/SettingsIcon.svg" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
 
-                        <ConfirmPopup TitleText="מחיקת משחק"
-                                      BodyText=@($"האם אתה בטוח שברצונך למחוק את משחק '{game.GameName}'?")
-                                      ConfirmButtonText="מחק"
-                                      CancelButtonText="בטל"
-                                      OnConfirmClick="() => DeleteGame(game)">
-                            <OpenButton>
-                                <Tooltip TooltipText="מחיקת משחק">
-                                    <button class="GamesList__action__button">
-                                        <img src="/Icons/DeleteIcon.svg" alt="Delete" class="GamesList__action__icon" />
-                                    </button>
-                                </Tooltip>
-                            </OpenButton>
-                        </ConfirmPopup>
+						<ConfirmPopup TitleText="מחיקת משחק"
+									  BodyText=@($"האם אתה בטוח שברצונך למחוק את משחק '{game.GameName}'?")
+									  ConfirmButtonText="מחק"
+									  CancelButtonText="בטל"
+									  OnConfirmClick="() => DeleteGame(game)">
+							<OpenButton>
+								<Tooltip TooltipText="מחיקת משחק">
+									<button class="GamesList__action__button">
+										<img src="/Icons/DeleteIcon.svg" alt="Delete" class="GamesList__action__icon" />
+									</button>
+								</Tooltip>
+							</OpenButton>
+						</ConfirmPopup>
 
-                        <ConfirmPopup TitleText="שכפול משחק"
-                                      BodyText=@($"האם אתה בטוח שברצונך לשכפל את משחק '{game.GameName}'?")
-                                      ConfirmButtonText="שכפל"
-                                      CancelButtonText="בטל"
-                                      OnConfirmClick="() => CopyGame(game.ID)">
-                            <OpenButton>
-                                <Tooltip TooltipText="שכפול משחק">
-                                    <button class="GamesList__action__button">
-                                        <img src="/Icons/CopyIcon.svg" alt="Copy" class="GamesList__action__icon" />
-                                    </button>
-                                </Tooltip>
-                            </OpenButton>
-                        </ConfirmPopup>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
+						<ConfirmPopup TitleText="שכפול משחק"
+									  BodyText=@($"האם אתה בטוח שברצונך לשכפל את משחק '{game.GameName}'?")
+									  ConfirmButtonText="שכפל"
+									  CancelButtonText="בטל"
+									  OnConfirmClick="() => CopyGame(game.ID)">
+							<OpenButton>
+								<Tooltip TooltipText="שכפול משחק">
+									<button class="GamesList__action__button">
+										<img src="/Icons/CopyIcon.svg" alt="Copy" class="GamesList__action__icon" />
+									</button>
+								</Tooltip>
+							</OpenButton>
+						</ConfirmPopup>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
 
-    <BasketballSpinner isSpinnerVisible="isLoadingGames" />
+	<BasketballSpinner isSpinnerVisible="isLoadingGames" />
 }
 
 <ToastComponent Type="@msgType" Message="@msg" @key="toastKey" />
 
 @code {
-    [CascadingParameter]
-    public int UserId { get; set; }
+	[CascadingParameter]
+	public int UserId { get; set; }
 
-    List<GameTable> MyGamesList = new List<GameTable>();
-    string msg = "";
-    string msgType = "info";
-    Guid toastKey = Guid.NewGuid();
-    bool isLoadingGames = true;
-    GameToAdd gameToAdd = new GameToAdd();
+	List<GameTable> MyGamesList = new List<GameTable>();
+	string msg = "";
+	string msgType = "info";
+	Guid toastKey = Guid.NewGuid();
+	bool isLoadingGames = true;
+	GameToAdd gameToAdd = new GameToAdd();
 
-    private bool showWarning = false;
-    private GameTable? selectedGame = null;
+	private bool showWarning = false;
+	private GameTable? selectedGame = null;
 
-    private void ShowDeleteWarning(GameTable game)
-    {
-        selectedGame = game;
-        showWarning = true;
-        Console.WriteLine($"ShowDeleteWarning called for game: {game.GameName}, showWarning set to {showWarning}");
-    }
+	private void ShowDeleteWarning(GameTable game)
+	{
+		selectedGame = game;
+		showWarning = true;
+		Console.WriteLine($"ShowDeleteWarning called for game: {game.GameName}, showWarning set to {showWarning}");
+	}
 
-    private async Task HandleDeleteConfirmed()
-    {
-        if (selectedGame != null)
-        {
-            Console.WriteLine($"Deleting game: {selectedGame.GameName}");
-            await DeleteGame(selectedGame);
-            selectedGame = null;
-            showWarning = false;
-        }
-    }
+	private async Task HandleDeleteConfirmed()
+	{
+		if (selectedGame != null)
+		{
+			Console.WriteLine($"Deleting game: {selectedGame.GameName}");
+			await DeleteGame(selectedGame);
+			selectedGame = null;
+			showWarning = false;
+		}
+	}
 
-    private void HandleCancel()
-    {
-        Console.WriteLine("Delete canceled");
-        selectedGame = null;
-        showWarning = false;
-    }
+	private void HandleCancel()
+	{
+		Console.WriteLine("Delete canceled");
+		selectedGame = null;
+		showWarning = false;
+	}
 
-    async Task CreateGame()
-    {
-        var newGameRes = await Http.PostAsJsonAsync("api/Table/addGame/", gameToAdd);
-        if (newGameRes.IsSuccessStatusCode)
-        {
-            msg = "";
-            GameTable newGame = await newGameRes.Content.ReadFromJsonAsync<GameTable>();
+	async Task CreateGame()
+	{
+		var newGameRes = await Http.PostAsJsonAsync("api/Table/addGame/", gameToAdd);
+		if (newGameRes.IsSuccessStatusCode)
+		{
+			msg = "";
+			GameTable newGame = await newGameRes.Content.ReadFromJsonAsync<GameTable>();
 
-            newGame.LastUpdated = DateTime.Now;
-            MyGamesList.Insert(0, newGame);
-            gameToAdd.GameName = "";
+			newGame.LastUpdated = DateTime.Now;
+			MyGamesList.Insert(0, newGame);
+			gameToAdd.GameName = "";
 
-            ShowToast(new ToastMessage { Message = "המשחק נוצר בהצלחה", Type = "success" });
-        }
-        else
-        {
-            string error = await newGameRes.Content.ReadAsStringAsync();
-            ShowError(error);
-        }
-    }
+			ShowToast(new ToastMessage { Message = "המשחק נוצר בהצלחה", Type = "success" });
+		}
+		else
+		{
+			string error = await newGameRes.Content.ReadAsStringAsync();
+			ShowError(error);
+		}
+	}
 
-    void ShowError(string error)
-    {
-        switch (error)
-        {
-            case "No games for this user":
-                msg = "עדין לא יצרת משחקים... זה הזמן ליצור את הראשון :)";
-                break;
-            case "user is not authenticated":
-                msg = "ארעה בעיה בעת אימות המשתמש";
-                break;
-            case "Game not created":
-                msg = "ארעה בעיה בעת יצירת המשחק";
-                break;
-            case "Game code not created":
-                msg = "ארעה בעיה בעת יצירת קוד המשחק";
-                break;
-            case "It's Not Your Game":
-                msg = "המשחק הזה אינו שלך...";
-                break;
-            case "This game cannot be published":
-                msg = "המשחק אינו מאושר לפרסום";
-                break;
-            case "Update Failed":
-                msg = "בעיה בעדכון המשחק";
-                break;
-            default:
-                msg = "Unknown error occurred";
-                break;
-        }
-        msgType = "error";
-        toastKey = Guid.NewGuid();
-    }
+	void ShowError(string error)
+	{
+		switch (error)
+		{
+			case "No games for this user":
+				msg = "עדין לא יצרת משחקים... זה הזמן ליצור את הראשון :)";
+				break;
+			case "user is not authenticated":
+				msg = "ארעה בעיה בעת אימות המשתמש";
+				break;
+			case "Game not created":
+				msg = "ארעה בעיה בעת יצירת המשחק";
+				break;
+			case "Game code not created":
+				msg = "ארעה בעיה בעת יצירת קוד המשחק";
+				break;
+			case "It's Not Your Game":
+				msg = "המשחק הזה אינו שלך...";
+				break;
+			case "This game cannot be published":
+				msg = "המשחק אינו מאושר לפרסום";
+				break;
+			case "Update Failed":
+				msg = "בעיה בעדכון המשחק";
+				break;
+			default:
+				msg = "Unknown error occurred";
+				break;
+		}
+		msgType = "error";
+		toastKey = Guid.NewGuid();
+	}
 
-    private async Task CopyGame(int originalGameId)
-    {
-        var copyGameResponse = await Http.PostAsync($"api/Table/copyGame/{originalGameId}", null);
+	private async Task CopyGame(int originalGameId)
+	{
+		var copyGameResponse = await Http.PostAsync($"api/Table/copyGame/{originalGameId}", null);
 
-        if (copyGameResponse.IsSuccessStatusCode)
-        {
-            msg = "";
+		if (copyGameResponse.IsSuccessStatusCode)
+		{
+			msg = "";
 
-            GameTable copiedGame = await copyGameResponse.Content.ReadFromJsonAsync<GameTable>();
+			GameTable copiedGame = await copyGameResponse.Content.ReadFromJsonAsync<GameTable>();
 
-            copiedGame.LastUpdated = DateTime.Now;
+			copiedGame.LastUpdated = DateTime.Now;
 
-            MyGamesList.Add(copiedGame);
+			MyGamesList.Insert(0, copiedGame);
 
-            ShowToast(new ToastMessage { Message = "המשחק שוכפל בהצלחה", Type = "success" });
-        }
-        else
-        {
-            string error = await copyGameResponse.Content.ReadAsStringAsync();
-            ShowError(error);
-        }
-    }
 
-    private async Task DeleteGame(GameTable game)
-    {
-        GameDelete gameToDelete = new GameDelete();
-        gameToDelete.ID = game.ID;
-        gameToDelete.GameCode = game.GameCode;
+			ShowToast(new ToastMessage { Message = "המשחק שוכפל בהצלחה", Type = "success" });
+		}
+		else
+		{
+			string error = await copyGameResponse.Content.ReadAsStringAsync();
+			ShowError(error);
+		}
+	}
 
-        var saveResponse = await Http.PostAsJsonAsync("api/Table/deletGame", gameToDelete);
+	private async Task DeleteGame(GameTable game)
+	{
+		GameDelete gameToDelete = new GameDelete();
+		gameToDelete.ID = game.ID;
+		gameToDelete.GameCode = game.GameCode;
 
-        if (saveResponse.IsSuccessStatusCode)
-        {
-            msg = "המשחק נמחק בהצלחה";
-            msgType = "success";
-            toastKey = Guid.NewGuid();
-            await LoadGames(); // Refresh the game list after deletion
+		var saveResponse = await Http.PostAsJsonAsync("api/Table/deletGame", gameToDelete);
 
-            ShowToast(new ToastMessage { Message = "המשחק נמחק בהצלחה", Type = "success" });
-        }
-        else
-        {
-            msg = "בעיה במחיקה " + saveResponse.StatusCode;
-            msgType = "error";
-            toastKey = Guid.NewGuid();
-        }
-    }
+		if (saveResponse.IsSuccessStatusCode)
+		{
+			msg = "המשחק נמחק בהצלחה";
+			msgType = "success";
+			toastKey = Guid.NewGuid();
+			await LoadGames(); // Refresh the game list after deletion
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadGames();
-    }
+			ShowToast(new ToastMessage { Message = "המשחק נמחק בהצלחה", Type = "success" });
+		}
+		else
+		{
+			msg = "בעיה במחיקה " + saveResponse.StatusCode;
+			msgType = "error";
+			toastKey = Guid.NewGuid();
+		}
+	}
 
-    public async Task LoadGames()
-    {
-        isLoadingGames = true;
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadGames();
+	}
 
-        var gamesRes = await Http.GetAsync("api/Table/GetUserGames");
-        if (gamesRes.IsSuccessStatusCode)
-        {
-            MyGamesList = await gamesRes.Content.ReadFromJsonAsync<List<GameTable>>();
-        }
-        else
-        {
-            string error = await gamesRes.Content.ReadAsStringAsync();
-            ShowError(error);
-        }
-        isLoadingGames = false;
-    }
+	public async Task LoadGames()
+	{
+		isLoadingGames = true;
 
-    void Navigate()
-    {
-        Nav.NavigateTo("./", true);
-    }
+		var gamesRes = await Http.GetAsync("api/Table/GetUserGames");
+		if (gamesRes.IsSuccessStatusCode)
+		{
+			MyGamesList = await gamesRes.Content.ReadFromJsonAsync<List<GameTable>>();
+		}
+		else
+		{
+			string error = await gamesRes.Content.ReadAsStringAsync();
+			ShowError(error);
+		}
+		isLoadingGames = false;
+	}
 
-    private void NavigateToEditPage(int gameId)
-    {
-        Nav.NavigateTo($"/GameEdit/{gameId}");
-    }
+	void Navigate()
+	{
+		Nav.NavigateTo("./", true);
+	}
 
-    private void ShowToast(ToastMessage toastMessage)
-    {
-        msg = toastMessage.Message;
-        msgType = toastMessage.Type;
-        toastKey = Guid.NewGuid();
-        StateHasChanged();
-    }
+	private void NavigateToEditPage(int gameId)
+	{
+		Nav.NavigateTo($"/GameEdit/{gameId}");
+	}
+
+	private void ShowToast(ToastMessage toastMessage)
+	{
+		msg = toastMessage.Message;
+		msgType = toastMessage.Type;
+		toastKey = Guid.NewGuid();
+		StateHasChanged();
+	}
 }

@@ -12,7 +12,7 @@
 <div>
 	<h1 class="page__title">עריכת משחק</h1>
 
-	<div style="border-radius: 10px; margin-top: 10px; background-color: #276075; color: white; padding: 5px 15px; display: flex; align-items: center; width: 400px; height: 60px; box-sizing: border-box; border: 1px solid #692346;">
+	<div style="margin-top:70px; border-radius: 10px; background-color: #276075; color: white; padding: 5px 15px; display: flex; align-items: center; width: 400px; height: 60px; box-sizing: border-box; border: 1px solid #692346;">
 
 
 		<div style="font-size: 16px; font-weight: bold; margin-bottom: 2px; color:white">
@@ -23,7 +23,7 @@
 		<div style="font-size: 16px; font-weight: bold; margin-bottom: 2px; color:white">
 			<span>@game.QuestionTime</span>
 			<span>שניות לשאלה</span>
-			 
+
 		</div>
 		<GameSettings game="game" ImageSrc="/Icons/settingsWhite.svg" OnGameUpdated="LoadGame" OnShowToast="ShowToast" />
 	</div>
@@ -31,7 +31,7 @@
 
 
 	<div style="display:flex;margin-top:15px;">
-		<div style="flex: 1; margin-right: 20px;">
+		<div style="flex: 1; margin-left: 100px;">
 
 
 			@if (selectedQuestion != null)
@@ -68,7 +68,7 @@
 					<div style="display: flex; align-items: center; font-size: 12px;">
 						@if (MyQuestionList.Count >= 10)
 						{
-							<CheckIcon/>
+							<CheckIcon />
 						}
 						else
 						{
@@ -87,7 +87,7 @@
 
 
 
-			<div style="height:65vh;position: relative;margin-top:15px;">
+			<div style="height:53vh;position: relative;margin-top:15px;">
 				@if (MyQuestionList != null && MyQuestionList.Count > 0)
 				{
 					<div style="height:83%;overflow-y: auto;">
@@ -96,8 +96,8 @@
 						{
 							<div style="background-color: #27607566;border-radius:5px; margin: 5px; padding: 5px; display: flex; align-items: center; justify-content: space-between;">
 								<div style="width:75%;overflow: hidden;
-white-space: nowrap;
-text-overflow: ellipsis;">
+								white-space: nowrap;
+									text-overflow: ellipsis;">
 									@question.QuestionText
 								</div>
 
@@ -207,6 +207,10 @@ text-overflow: ellipsis;">
 		{
 			selectedQuestion = await response.Content.ReadFromJsonAsync<QuestionData>();
 			selectedQuestion.QuestionId = questionID;
+			while (selectedQuestion.answers.Count < 6)
+			{
+				selectedQuestion.answers.Add(new AnswerToAdd());
+			}
 		}
 		else
 		{

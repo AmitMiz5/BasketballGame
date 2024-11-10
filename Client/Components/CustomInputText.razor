@@ -13,10 +13,16 @@
 			   @bind="@CurrentValueAsString" @bind:event="oninput" @onkeyup="countChars"
 			   maxlength="@maxLength" />
 	}
-	<div style="margin-left:5px;text-align:left;">@length.ToString()/@maxLength.ToString()</div>
+
+	<div style="margin-left:5px;text-align:left;@(isBlackLabel ? "color:black;" : "")">
+		@length.ToString()/@maxLength.ToString()
+	</div>
 </div>
 
 @code {
+	[Parameter]
+	public bool isBlackLabel { get; set; } = false;
+
 	[Parameter]
 	public bool textArea { get; set; } = false;
 

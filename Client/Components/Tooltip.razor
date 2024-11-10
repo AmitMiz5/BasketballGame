@@ -58,6 +58,7 @@
 
     private void ShowTooltipHandler(MouseEventArgs e)
     {
+        TooltipText = TooltipText;
         TooltipPosition = ((int)e.ClientY - 35, (int)e.ClientX);
         ShowTooltip = true;
     }
