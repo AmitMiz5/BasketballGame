@@ -5,12 +5,12 @@
 <div style="position: relative; display: inline-block;margin-top:15px;">
     <div style="border-radius: 10px; background-color: #276075; color: white; padding: 5px 15px; display: flex; align-items: center; justify-content: center; width: 200px; height: 35px; box-sizing: border-box; border: 1px solid #692346;">
         <div style="font-size: 16px; font-weight: bold; color: white;">
-            <span>הוספת משחק חדש</span>
+            <span>הוספת משחק חדש</span> @* טקסט לכפתור הוספת משחק חדש *@
         </div>
     </div>
     <button class="GamesList__action__button" @onclick="OpenPopup" style="position: absolute; top: -30px; right: -30px; border: none; background: none;">
         <div style="position: relative; width: 50px; height: 50px;">
-            <img src="@ImageSrc" alt="Add Game" style="width: 50px; height: 50px;" />
+            <img src="@ImageSrc" alt="Add Game" style="width: 50px; height: 50px;" /> @* הצגת אייקון כפתור להוספת משחק *@
             <div style="
                 position: absolute;
                 top: 40%;
@@ -22,47 +22,46 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;">
-                +
+                + @* סימן פלוס במרכז הכפתור *@
             </div>
         </div>
     </button>
 </div>
 
-
-
 <div class="confirm-popup-overlay" style="display: @(isPopupOpen ? "flex" : "none");">
-    <div class="confirm-popup-container">
-        <img src="/Icons/BgSmallPopUp.png" alt="Popup Background Image" style="width:100% !important;" />
 
-        <button class="confirm-close-button" style="left:50px !important;" @onclick="ClosePopup">X</button>
+    @* הצגת פופאפ בהתאם למצב isPopupOpen *@
+    <div class="confirm-popup-container">
+        <img src="/Icons/BgSmallPopUp.png" alt="Popup Background Image" style="width:100% !important;" /> @* תמונה כרקע לפופאפ *@
+
+        <button class="confirm-close-button" style="left:50px !important;" @onclick="ClosePopup">X</button> @* כפתור לסגירת הפופאפ *@
 
         <div class="confirm-popup-content" style="margin-top:10px !important;">
             <div class="confirm-popup-text" style="margin-top:10px !important;">
-                <h3 class="confirm-popup-title">הוספת משחק חדש</h3>
+                <h3 class="confirm-popup-title">הוספת משחק חדש</h3> @* כותרת הפופאפ *@
             </div>
 
             <EditForm Model="gameToAdd" OnValidSubmit="SaveChanges">
-                <DataAnnotationsValidator />
+                @* טופס עריכה להוספת משחק חדש *@
+                <DataAnnotationsValidator /> @* תנאים לשדות הטופס *@
 
-
-         <div style="display:flex;flex-direction:column;">
-                    <label style="text-align:right;" for="gameName">שם המשחק:</label>
-                    <CustomInputText @bind-Value="gameToAdd.GameName" maxLength="40" midLength="35" minLength="2" placeholder="שם המשחק" style="margin-bottom:10px;" />
-                    <ValidationMessage For="@(() => gameToAdd.GameName)" class="error-message" style="color:white;"/>
-         </div>
-
+                <div style="display:flex;flex-direction:column;">
+                    <label style="text-align:right;" for="gameName">שם המשחק:</label> @* תווית עבור שם המשחק *@
+                    <CustomInputText @bind-Value="gameToAdd.GameName" maxLength="40" midLength="35" minLength="2" placeholder="שם המשחק" style="margin-bottom:10px;" /> @* שדה קלט לשם המשחק *@
+                    <ValidationMessage For="@(() => gameToAdd.GameName)" class="error-message" style="color:white;" /> @* הודעת שגיאה עבור שם המשחק *@
+                </div>
 
                 <div style="margin-top:10px;display:flex;flex-direction:column;align-items:flex-start;">
-                    <label for="questionTime">זמן לכל שאלה:</label>
+                    <label for="questionTime">זמן לכל שאלה:</label> @* תווית עבור זמן שאלה *@
                     <select id="questionTime" @bind="gameToAdd.QuestionTime" class="confirm-popup-select" style="width:100%;margin-bottom: 10px;">
-                        <option value="30">30 שניות</option>
-                        <option value="60">60 שניות</option>
-                        <option value="90">90 שניות</option>
-                        <option value="0">ללא הגבלה</option>
+                        <option value="30">30 שניות</option> @* אפשרות זמן של 30 שניות לשאלה *@
+                        <option value="60">60 שניות</option> @* אפשרות זמן של 60 שניות לשאלה *@
+                        <option value="90">90 שניות</option> @* אפשרות זמן של 90 שניות לשאלה *@
+                        <option value="0">ללא הגבלה</option> @* אפשרות לזמן בלתי מוגבל *@
                     </select>
                 </div>
 
-                <button type="submit" class="confirm-confirm-button" style="margin-bottom:20px;">יצירת משחק</button>
+                <button type="submit" class="confirm-confirm-button" style="margin-bottom:20px;">יצירת משחק</button> @* כפתור יצירת משחק *@
             </EditForm>
         </div>
     </div>
@@ -70,60 +69,56 @@
 
 @code {
     [Parameter]
-    public GameToAdd gameToAdd { get; set; } = new GameToAdd();
+    public GameToAdd gameToAdd { get; set; } = new GameToAdd(); //  משחק להוספה
 
     [Parameter]
-    public EventCallback OnGameUpdated { get; set; }
+    public EventCallback OnGameUpdated { get; set; } // אירוע עדכון רשימת המשחקים
 
     [Parameter]
-    public Action<ToastMessage> OnShowToast { get; set; }
+    public Action<ToastMessage> OnShowToast { get; set; } // פעולה להצגת הודעת טוסט
 
-    List<GameTable> MyGamesList = new List<GameTable>();
+    List<GameTable> MyGamesList = new List<GameTable>(); // רשימה של המשחקים
 
     [Parameter]
-    public string ImageSrc { get; set; }
+    public string ImageSrc { get; set; } //  תמונה עבור הכפתור להוספת משחק
 
-    private bool isPopupOpen = false;
+    private bool isPopupOpen = false; // מצב פתיחה של הפופאפ
 
     private void OpenPopup()
     {
-        isPopupOpen = true;
+        isPopupOpen = true; // פעולה לפתיחת הפופאפ
     }
 
     private void ClosePopup()
     {
-        isPopupOpen = false;
+        isPopupOpen = false; // פעולה לסגירת הפופאפ
     }
 
     private async Task SaveChanges()
     {
-        await CreateGame(gameToAdd);
-        ClosePopup();
+        await CreateGame(gameToAdd); // יצירת משחק חדש
+        ClosePopup(); // סגירת הפופאפ לאחר שמירת השינויים
     }
 
     async Task CreateGame(GameToAdd gameToAdd)
     {
-        var newGameRes = await Http.PostAsJsonAsync("api/Table/addGame/", gameToAdd);
+        var newGameRes = await Http.PostAsJsonAsync("api/Table/addGame/", gameToAdd); // שליחת בקשה להוספת משחק חדש
         if (newGameRes.IsSuccessStatusCode)
         {
-            await OnGameUpdated.InvokeAsync();
+            await OnGameUpdated.InvokeAsync(); // קריאת אירוע עדכון רשימת המשחקים
 
-            GameTable newGame = await newGameRes.Content.ReadFromJsonAsync<GameTable>();
+            GameTable newGame = await newGameRes.Content.ReadFromJsonAsync<GameTable>(); // קריאת נתוני המשחק שנוצר
 
-            newGame.LastUpdated = DateTime.Now;
-            MyGamesList.Insert(0, newGame);
-            gameToAdd.GameName = "";
+            newGame.LastUpdated = DateTime.Now; // עדכון זמן אחרון למשחק
+            MyGamesList.Insert(0, newGame); // הוספת המשחק לרשימה
+            gameToAdd.GameName = ""; // איפוס שם המשחק בטופס
 
-            OnShowToast?.Invoke(new ToastMessage { Message = "המשחק נוסף בהצלחה", Type = "success" });
+            OnShowToast?.Invoke(new ToastMessage { Message = "המשחק נוסף בהצלחה", Type = "success" }); // הודעת הצלחה
         }
         else
         {
-            string error = await newGameRes.Content.ReadAsStringAsync();
-            OnShowToast?.Invoke(new ToastMessage { Message = "שגיאה בהוספת המשחק: " + error, Type = "error" });
+            string error = await newGameRes.Content.ReadAsStringAsync(); // קריאת שגיאה מהבקשה
+            OnShowToast?.Invoke(new ToastMessage { Message = "שגיאה בהוספת המשחק: " + error, Type = "error" }); // הצגת הודעת שגיאה
         }
-
-      
-
-
     }
 }

@@ -8,34 +8,30 @@
 @inject NavigationManager Nav
 <PageTitle>עריכת משחק</PageTitle>
 
-
 <div>
 	<h1 class="page__title">עריכת משחק</h1>
 
 	<div style="margin-top:70px; border-radius: 10px; background-color: #276075; color: white; padding: 5px 15px; display: flex; align-items: center; width: 400px; height: 60px; box-sizing: border-box; border: 1px solid #692346;">
-
+		@* כותרת והגדרות תצוגה לעריכת המשחק *@
 
 		<div style="font-size: 16px; font-weight: bold; margin-bottom: 2px; color:white">
 			<span>שם המשחק:</span>
-			<span>@game.GameName</span>
+			<span>@game.GameName</span> @* הצגת שם המשחק *@
 		</div>
 		<div class="GamesList__vertical-divider"></div>
 		<div style="font-size: 16px; font-weight: bold; margin-bottom: 2px; color:white">
 			<span>@game.QuestionTime</span>
-			<span>שניות לשאלה</span>
-
+			<span>שניות לשאלה</span> @* הצגת זמן השאלה *@
 		</div>
 		<GameSettings game="game" ImageSrc="/Icons/settingsWhite.svg" OnGameUpdated="LoadGame" OnShowToast="ShowToast" />
 	</div>
 
-
-
 	<div style="display:flex;margin-top:15px;">
 		<div style="flex: 1; margin-left: 100px;">
 
-
 			@if (selectedQuestion != null)
 			{
+				@* הצגת שאלה לעריכה אם קיימת *@
 				<AddQuestion GameId="@gameId"
 							 QuestionId="@selectedQuestion.QuestionId"
 							 questionToAdd="selectedQuestion.questionToAdd"
@@ -45,6 +41,7 @@
 			}
 			else
 			{
+				@* תבנית לשאלה חדשה אם אין שאלות שנבחרו *@
 				<AddQuestion GameId="@gameId"
 							 questionToAdd="new QuestionToAdd()"
 							 answers="new List<AnswerToAdd> { new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd(), new AnswerToAdd() }"
@@ -53,39 +50,33 @@
 			}
 		</div>
 
-		<div style="margin-right: 20px; margin-top: 20px;">
+		<div style="margin-right: 20px; margin-top: 20px; width:35%;">
 			<div style="display:flex">
 				<button class="base-button" style="flex: 1;" @onclick="NavigateToGamesList">חזרה למשחקים שלי</button>
 				<PublishButton game="game" OnShowToast="ShowToast" />
-
-
 			</div>
-
 
 			<div style="border-radius: 10px; margin-top: 10px; background-color: #276075; color: white; padding: 5px 15px; display: flex; align-items: center; height: 60px; box-sizing: border-box;border: 1px solid #692346;">
 				<div style="flex: 1; display: flex; flex-direction: column; padding-left: 10px; text-align: right;">
-					<div style="font-size: 16px; font-weight: bold; margin-bottom: 1px;">מאגר שאלות</div>
+					<div style="font-size: 16px; font-weight: bold; margin-bottom: 1px;">מאגר שאלות</div> @* אזור תצוגת מאגר השאלות *@
 					<div style="display: flex; align-items: center; font-size: 12px;">
 						@if (MyQuestionList.Count >= 10)
 						{
-							<CheckIcon />
+							<CheckIcon /> @* סימון  אם יש 10 שאלות או יותר *@
 						}
 						else
 						{
-							<ErrorIcon />
-
+							<ErrorIcon /> @* סימון התראה אם יש פחות מ-10 שאלות *@
 						}
 						<span>לפרסום משחק יש ליצור לפחות 10 שאלות</span>
 					</div>
 				</div>
 
 				<div style="font-size: 20px; font-weight: bold; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
-					<div>@MyQuestionList.Count</div>
+					<div>@MyQuestionList.Count</div> @* הצגת כמות השאלות למשחק *@
 					<div style="font-size: 12px; padding-left: 5px;">שאלות</div>
 				</div>
 			</div>
-
-
 
 			<div style="height:53vh;position: relative;margin-top:15px;">
 				@if (MyQuestionList != null && MyQuestionList.Count > 0)
@@ -95,17 +86,14 @@
 						@foreach (QuestionDetails question in MyQuestionList)
 						{
 							<div style="background-color: #27607566;border-radius:5px; margin: 5px; padding: 5px; display: flex; align-items: center; justify-content: space-between;">
-								<div style="width:75%;overflow: hidden;
-								white-space: nowrap;
-									text-overflow: ellipsis;">
-									@question.QuestionText
+								<div style="width:75%;overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+									@question.QuestionText @* הצגת טקסט השאלה *@
 								</div>
 
 								<div style="display: flex; gap: 10px;">
 									<Tooltip TooltipText="עריכת השאלה">
-										<button style="border: none; padding: 5px; border-radius: 3px;"
-												@onclick="() => LoadQuestionDetails(question.ID)">
-											<img src="/Icons/EditIcon.svg" alt="Edit" style="height: 24px; width: 24px; border: none" />
+										<button style="border: none; padding: 5px; border-radius: 3px;" @onclick="() => LoadQuestionDetails(question.ID)">
+											<img src="/Icons/EditIcon.svg" alt="Edit" style="height: 24px; width: 24px; border: none" /> @* כפתור לעריכת השאלה *@
 										</button>
 									</Tooltip>
 
@@ -117,7 +105,7 @@
 										<OpenButton>
 											<Tooltip TooltipText="מחיקת שאלה">
 												<button style="border: none; padding: 5px; border-radius: 3px;">
-													<img src="/Icons/DeleteIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" />
+													<img src="/Icons/DeleteIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" /> @* כפתור למחיקת השאלה *@
 												</button>
 											</Tooltip>
 										</OpenButton>
@@ -130,122 +118,121 @@
 					@if (selectedQuestion != null)
 					{
 						<button class="base-button" style="position: absolute; left: 50%; transform: translateX(-50%); width:65%;" @onclick="() => { selectedQuestion = null; }"> הוספת שאלה חדשה</button>
-
 					}
 				}
 			</div>
-
 		</div>
 	</div>
 </div>
 
-<ToastComponent Type="@msgType" Message="@msg" @key="toastKey" />
+<ToastComponent Type="@msgType" Message="@msg" @key="toastKey" /> @* הצגת הודעות מערכת *@
+
 
 @code {
 	[Parameter]
-	public int gameId { get; set; }
+	public int gameId { get; set; } // מזהה המשחק הנבחר
 
-	string msg = "";
-	string msgType = "info";
-	Guid toastKey = Guid.NewGuid();
 
-	List<QuestionDetails> MyQuestionList = new List<QuestionDetails>();
-	QuestionData selectedQuestion;
 
-	GameQuestionRequest gameDto = new GameQuestionRequest();
+	string msg = ""; // הודעה להצגה בטוסט
+	string msgType = "info"; // סוג הודעה לטוסט
+	Guid toastKey = Guid.NewGuid(); // מפתח ייחודי להצגת הטוסט
 
-	private GameTable game = new GameTable();
+	List<QuestionDetails> MyQuestionList = new List<QuestionDetails>(); // רשימת שאלות במאגר
+	QuestionData selectedQuestion; // השאלה שנבחרה לעריכה
 
+	GameQuestionRequest gameDto = new GameQuestionRequest(); // בקשת המשחק
+
+	private GameTable game = new GameTable(); // אובייקט משחק להחזקת נתוני המשחק הנוכחי
 
 	protected override async Task OnInitializedAsync()
 	{
-		await LoadGame();
-		await LoadQuestions();
+		await LoadGame(); // טעינת פרטי המשחק
+		await LoadQuestions(); // טעינת רשימת השאלות
 	}
 
 	private void NavigateToGamesList()
 	{
-		Nav.NavigateTo("GamesList");
+		Nav.NavigateTo("GamesList"); // ניווט חזרה לרשימת המשחקים
 	}
 
 	public async Task LoadGame()
 	{
-		var response = await Http.GetAsync("api/GameData/GetGameData/" + gameId);
+		var response = await Http.GetAsync("api/GameData/GetGameData/" + gameId); // בקשת נתוני משחק מהשרת
 
 		if (response.IsSuccessStatusCode)
 		{
-			game = await response.Content.ReadFromJsonAsync<GameTable>();
+			game = await response.Content.ReadFromJsonAsync<GameTable>(); // שמירת נתוני המשחק אם הצליח
 		}
-
 	}
 
 	public async Task LoadQuestions()
 	{
-		await LoadGame();
-		selectedQuestion = null;
-		gameDto.GameID = gameId;
+		await LoadGame(); // טעינת נתוני המשחק מחדש
+		selectedQuestion = null; // איפוס השאלה שנבחרה
+		gameDto.GameID = gameId; // הגדרת מזהה המשחק לבקשה
 
-		var response = await Http.PostAsJsonAsync("api/GameData/GetQuestionList", gameDto);
+		var response = await Http.PostAsJsonAsync("api/GameData/GetQuestionList", gameDto); // בקשה לקבלת רשימת השאלות
 
 		if (response.IsSuccessStatusCode)
 		{
-			MyQuestionList = await response.Content.ReadFromJsonAsync<List<QuestionDetails>>();
+			MyQuestionList = await response.Content.ReadFromJsonAsync<List<QuestionDetails>>(); // שמירת רשימת השאלות
 		}
 		else
 		{
-			MyQuestionList = new List<QuestionDetails>();
+			MyQuestionList = new List<QuestionDetails>(); // איפוס רשימת השאלות אם יש תקלה
 		}
-
 	}
 
 	public async Task LoadQuestionDetails(int questionID)
 	{
-		var response = await Http.GetAsync("api/GameData/getQuestion/" + questionID);
+		var response = await Http.GetAsync("api/GameData/getQuestion/" + questionID); // בקשת נתוני שאלה ספציפית
 		string error = await response.Content.ReadAsStringAsync();
 
 		if (response.IsSuccessStatusCode)
 		{
-			selectedQuestion = await response.Content.ReadFromJsonAsync<QuestionData>();
-			selectedQuestion.QuestionId = questionID;
-			while (selectedQuestion.answers.Count < 6)
+			selectedQuestion = await response.Content.ReadFromJsonAsync<QuestionData>(); // שמירת השאלה שנבחרה לעריכה
+			selectedQuestion.QuestionId = questionID; // הגדרת מזהה השאלה
+			while (selectedQuestion.answers.Count < 6) // בדיקת תנאי אם יש 6 תשובות בשאלה
 			{
 				selectedQuestion.answers.Add(new AnswerToAdd());
 			}
 		}
 		else
 		{
-			ShowToast(new ToastMessage { Message = "Error retrieving question details: " + error, Type = "error" });
+			ShowToast(new ToastMessage { Message = "Error retrieving question details: " + error, Type = "error" }); // הצגת הודעת שגיאה אם יש תקלה
 		}
 	}
 
 	private async Task DeleteQuestion(int questionID)
 	{
-		var response = await Http.DeleteAsync($"api/GameData/deleteQuestion/{gameId}/{questionID}");
+		var response = await Http.DeleteAsync($"api/GameData/deleteQuestion/{gameId}/{questionID}"); // בקשת מחיקת שאלה לפי מזהה
 		if (response.IsSuccessStatusCode)
 		{
-			ShowToast(new ToastMessage { Message = "שאלה נמחקה בהצלחה", Type = "success" });
-			MyQuestionList.RemoveAll(q => q.ID == questionID);
+			ShowToast(new ToastMessage { Message = "שאלה נמחקה בהצלחה", Type = "success" }); // הודעת הצלחה במחיקה
+			MyQuestionList.RemoveAll(q => q.ID == questionID); // הסרת השאלה מהרשימה המקומית
 			StateHasChanged();
-			await LoadQuestions();
+			await LoadQuestions(); // טעינת רשימת השאלות מחדש
 		}
 		else
 		{
-			ShowToast(new ToastMessage { Message = "תקלה במחיקת שאלה, נסה שנית", Type = "error" });
+			ShowToast(new ToastMessage { Message = "תקלה במחיקת שאלה, נסה שנית", Type = "error" }); // הודעת שגיאה אם מחיקת השאלה נכשלה
 		}
 	}
 
 	private void ShowToast(ToastMessage toastMessage)
 	{
-		msg = toastMessage.Message;
-		msgType = toastMessage.Type;
-		toastKey = Guid.NewGuid();
-		StateHasChanged();
+		msg = toastMessage.Message; // הגדרת הודעת הטוסט
+		msgType = toastMessage.Type; // הגדרת סוג ההודעה
+		toastKey = Guid.NewGuid(); // רענון מפתח הטוסט
+		StateHasChanged(); // עדכון ממשק המשתמש
 	}
 
 	private class QuestionData
 	{
-		public QuestionToAdd questionToAdd { get; set; }
-		public List<AnswerToAdd> answers { get; set; }
-		public int QuestionId { get; set; }
+		public QuestionToAdd questionToAdd { get; set; } // השאלה להוספה או עריכה
+		public List<AnswerToAdd> answers { get; set; } // רשימת תשובות לשאלה
+		public int QuestionId { get; set; } // מזהה השאלה
 	}
 }
+

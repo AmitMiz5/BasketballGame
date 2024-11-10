@@ -9,14 +9,14 @@
 	<DataAnnotationsValidator />
 
 
-	<div style="width: 100%;">
+	<div style="width: 100%;">@*  כותרת משתנה לפי סוג הבקשה *@
 		<label for="question-text" style="display: block; font-weight: bold; font-size: 18px;">
 			@(QuestionId != null ? "עריכת שאלה:" : "הוספת שאלה חדשה:")
 		</label>
 	</div>
 
 	<div>
-		<div style="display:flex; align-items: center;">
+		<div style="display:flex; align-items: center;"> @* סימון למשתמש האם עומד בתנאים לשמירת שאלה *@
 			@if (!string.IsNullOrEmpty(questionToAdd.QuestionText) && questionToAdd.QuestionText.Length >= 2)
 			{
 				<CheckIcon />
@@ -32,11 +32,12 @@
 		<div>
 			<div style="display: flex; gap: 10px; align-items: center;">
 
-				<div style="flex-grow: 1;">
+				<div style="flex-grow: 1;"> @* הכנסת טקסט לשאלה *@
 					<CustomInputText @bind-Value="questionToAdd.QuestionText" maxLength="150" midLength="145" minLength="2" placeholder="גזע השאלה" id="question-text" style="width: 100%; height: 89px; background: #FFF5F5; border: 1px solid #000000; border-radius: 8px; white-space: normal; overflow-wrap: break-word;resize: none;" textArea="true" />
 				</div>
 
 				<div style="margin-top: -14px;">
+					@* הכנסת תמונה לשאלה *@
 					@if (string.IsNullOrEmpty(questionToAdd.QuestionPhoto))
 					{
 						<label for="FileInputID" style="box-sizing: border-box; width: 150px; height: 89px; background: #FFF5F5; border: 1px solid #000000; color: #0f1111; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Amazon Ember', sans-serif; font-size: 13px; text-align: center; text-decoration: none; user-select: none; -webkit-user-select: none; touch-action: manipulation; border-radius: 8px;" role="button">
@@ -47,18 +48,20 @@
 					}
 					<InputFile id="FileInputID" OnChange="UploadQuestionImg" hidden />
 
-					@if (!string.IsNullOrEmpty(questionToAdd.QuestionPhoto))
+					@if (!string.IsNullOrEmpty(questionToAdd.QuestionPhoto)) @* שדה להצגת התמונה הנבחרה *@
 					{
 						<div style="position: relative; display: inline-block;">
 							@if (questionToAdd.QuestionPhoto.Contains(".png"))
 							{
-								<img src="/uploadedFiles/@questionToAdd.QuestionPhoto" alt="Uploaded Image" style="max-width: 40px; height: 40px; border-radius: 8px;" />
+								<img src="/uploadedFiles/@questionToAdd.QuestionPhoto" alt="Uploaded Image"
+									 style="width: 150px; height: 89px; border-radius: 8px; object-fit: contain;" />
 							}
 							else
 							{
-								<img src="data:image/png;base64,@questionToAdd.QuestionPhoto" alt="Uploaded Image" style="max-width: 150px; border-radius: 8px;" />
+								<img src="data:image/png;base64,@questionToAdd.QuestionPhoto" alt="Uploaded Image" style="width: 150px; height: 89px; border-radius: 8px; object-fit: contain;" />
 							}
-							<span class="remove-image" style="position: absolute; top: 0; left: 0; background-color: red; color: white; padding: 1px 2px; cursor: pointer;" @onclick="() => { questionToAdd.QuestionPhoto = null; }">X</span>
+
+							<span class="remove-image" @onclick="() => { questionToAdd.QuestionPhoto = null; }"><img src="/Icons/DeleteIcon.svg" alt="Delete" style="width:18px;height:18px;" /></span>
 						</div>
 					}
 				</div>
@@ -69,12 +72,14 @@
 
 
 	<div style="width: 100%;">
+		@* כותרת תשובות *@
 		<label for="question-text" style="display: block; font-weight: bold; font-size: 18px;">
 			תשובות
 		</label>
 	</div>
 
 	<div style="display: flex; gap: 20px ; margin-bottom:10px;">
+		@* בדיקה לצורך הצגת תנאים לשמירה למשתמש *@
 
 		@{
 			int answersWithContentCount = answers.Count(answer => !string.IsNullOrEmpty(answer.AnswerContent) && answer.AnswerContent.Length >= 2);
@@ -114,6 +119,7 @@
 
 
 	<div style="width:85%;margin-top: 30px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+		@* הוספת בלוקים להכנסת תוכן לתשובות- טקסט או תמונה *@
 		@for (int i = 0; i < answers.Count; i++)
 		{
 			var index = i;
@@ -222,7 +228,12 @@
 		.remove-image {
 			font-weight: bold;
 			border-radius: 50%;
-			padding: 2px 5px;
+			position: absolute;
+			top: -10px;
+			left: -5px;
+			background-color: white;
+			padding: 5px;
+			cursor: pointer;
 		}
 	</style>
 
@@ -230,7 +241,7 @@
 	</div>
 
 
-
+	@* הוספת כפור למחיקת שאלה רק במידה ואנחנו במסך עריכת שאלה *@
 	<div style="display:flex">
 		<Tooltip TooltipText="@TooltipText">
 			<input type="submit" value="שמירה" disabled="@(!IsFormValid)" class="base-button" />
@@ -258,28 +269,28 @@
 
 
 	[Parameter]
-	public int GameId { get; set; }
+	public int GameId { get; set; } // מזהה משחק
 
 	[Parameter]
-	public int? QuestionId { get; set; }
+	public int? QuestionId { get; set; } // מזהה שאלה אם קיים
 
 	[Parameter]
-	public EventCallback OnQuestionUpdated { get; set; }
+	public EventCallback OnQuestionUpdated { get; set; } // הודעה על עדכון שאלה
 
 	[Parameter]
-	public QuestionToAdd questionToAdd { get; set; }
+	public QuestionToAdd questionToAdd { get; set; } // תבנית הוספת שאלה
 
 	[Parameter]
-	public List<AnswerToAdd> answers { get; set; }
+	public List<AnswerToAdd> answers { get; set; } // תבנית הוספת תשובות
 
 	[Parameter]
-	public EventCallback<ToastMessage> OnShowToast { get; set; } // Callback to show toast in parent
+	public EventCallback<ToastMessage> OnShowToast { get; set; } // הודעה להצגת טוסט 
 
-	private Guid toastKey = Guid.NewGuid();
+	private Guid toastKey = Guid.NewGuid(); // מזהה להצגת הודעת טקסט
 
-	string myFileImage = ""; // Variable for base64 image
-	long maxFileSize = 4194304; // Max file size (4 MB)
-	private string imageBase64 = "";
+	string myFileImage = ""; // משתנה לתמונה 
+	long maxFileSize = 4194304; // מקסימום גודל העלאת תמונה
+	private string imageBase64 = ""; // סוגי קובץ העלאת תמונה 
 
 	string msg = "";
 	string msgType = "info"; // Message type for the toast
