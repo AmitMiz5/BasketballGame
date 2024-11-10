@@ -26,10 +26,10 @@ public class EndScript : MonoBehaviour
         timerCounter.text = formattedTime; // שינוי הטקסט לזמן הכולל
         wrongAnswersCounter.text = gameManager.totalWrongAnswers.ToString(); // הצגת כמות התשובות השגויות של המשתמש
         scoreText.text = Mathf.Round(gameManager.score).ToString();
-        HideTextProggres();
+        HideTextProggres(); //קריאה לפונקציית הסתרת טקסט
     }
 
-    private void HideTextProggres()
+    private void HideTextProggres() // איפוס הטקסט של הטיימר וכמות תשובות נכונות
     {
         timerQustionCounter.text = "";
         AnswersCounter.text = "";

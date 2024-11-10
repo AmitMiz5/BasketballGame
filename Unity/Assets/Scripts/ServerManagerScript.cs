@@ -8,48 +8,50 @@ using UnityEngine.Networking;
 
 public class ServerManagerScript : MonoBehaviour
 {
-	//[SerializeField] TMP_InputField codeInput;
-	[SerializeField] GameObject startButton;
-	[SerializeField] GameManagerScript gameManager;
-	[SerializeField] StartScript startScript;
-	[SerializeField] Sprite tempImage;
-	[SerializeField] private TextMeshProUGUI codeMessage;
 
-	//string projectURL = "./../"; //הנתיב לפרוייקט
-	string projectURL = "https://localhost:7022/"; //הנתיב לפרוייקט
+	[SerializeField] GameObject startButton; //כפתור התחלה
+	[SerializeField] GameManagerScript gameManager;// קישור לסקריפט גיים מנג׳ר
+	[SerializeField] Sprite tempImage;//שמירת תמונה
+	[SerializeField] private TextMeshProUGUI codeMessage;//טקסט להודעת שגיאה בקוד
+
+	string projectURL = "./../"; // הנתיב לשרת - בילד
+
+	//string projectURL = "https://localhost:7022/"; הנתיב לשרת - לוקאלי
 	string apiURL = "api/Unity/GetGameDetails/"; //הנתיב לקונטרולר שיצרתם
 	string imagesURL = "uploadedFiles/"; //הנתיב לתיקיית התמונות
 
 
-	public async void CheckCode(string curCode)
+	public async void CheckCode(string curCode)//פונקצייה לבדיקת תקינות הקוד
 	{
-		string code = curCode;
-		startButton.SetActive(false);
+		string code = curCode;//שמירת הקוד שהוקלד כמשתנה
+		startButton.SetActive(false);//הסתרת כפתור התחלה
 
-		GameData unityGame = await getDataFromServer(code);
-		Debug.Log(unityGame);
-		if (unityGame == null) // NEW: Check if game data was not retrieved
+		GameData unityGame = await getDataFromServer(code);//שליפת נתוני המשחק מהשרת לפי הקוד
+
+		if (unityGame == null) // בדיקה אם נתוני המשחק לא קיימים
 		{
-			codeMessage.text = "לא קיים משחק עם קוד זה"; // NEW: Display error to user
-			startButton.SetActive(true); // NEW: Reactivate start button for retry
+			codeMessage.text = "לא קיים משחק עם קוד זה";
+			//הצגת שגיאה
+			startButton.SetActive(true); // הצגת כפתור להקלדת ובדיקת קוד חדש
 			return;
 		}
 
-		if (unityGame.isPublish == false) // NEW: Check if game is not published
+		if (unityGame.isPublish == false) // בדיקה האם המשחק קיים אך לא פורסם
 		{
-			codeMessage.text = "המשחק קיים אך לא פורסם"; // NEW: Display error to user
-			startButton.SetActive(true); // NEW: Reactivate start button for retry
+			codeMessage.text = "המשחק קיים אך לא פורסם";
+			//הצגת שגיאה למשתמש
+			startButton.SetActive(true); // הצגת כפתור להקלדת ובדיקת קוד חדש
 			return;
 		}
 
 
-		gameManager.GetGame(unityGame);
+		gameManager.GetGame(unityGame);//קריאה לפונקציה מהגיים מנג׳ר של בניית המשחק לפי הנתונים מהשרת
 
 
 
 
 	}
-	private async Task<GameData> getDataFromServer(string code)
+	private async Task<GameData> getDataFromServer(string code) //קבלת הקוד שהוקלד ושליפת הנתונים לפיו
 	{
 		string endPoint = projectURL + apiURL + code;
 		using var http = UnityWebRequest.Get(endPoint);
@@ -66,24 +68,24 @@ public class ServerManagerScript : MonoBehaviour
 			GameData UnityGame = new GameData(); //יצירת משחק חדש
 			UnityGame.isPublish = serverGame.isPublish;
 			UnityGame.gameName = serverGame.gameName;//server game לפי השמות בדאטה בייס
-			UnityGame.questionTime = serverGame.questionTime;
-			UnityGame.questionList = new List<QuestionData>();
+			UnityGame.questionTime = serverGame.questionTime;//קבלת זמן לכל שאלה
+			UnityGame.questionList = new List<QuestionData>();//קבלת רשימת השאלות
 			foreach (ServerQuestion question in serverGame.questions)
 			{
 				QuestionData unityQuestion = new QuestionData();
-				unityQuestion.content = question.questionText;
-				if (string.IsNullOrEmpty(question.questionPhoto) == false)
+				unityQuestion.content = question.questionText;//קבלת טקסט לשאלות
+				if (string.IsNullOrEmpty(question.questionPhoto) == false)//בדיקה האם קיימת תמונה לשאלה
 				{
 					unityQuestion.spriteContent = await LoadImage(question.questionPhoto);
 				}
 
-				unityQuestion.answerList = new List<AnswerData>();
-				foreach (ServerAnswer answer in question.answers)
+				unityQuestion.answerList = new List<AnswerData>();//רשימת התשובות
+				foreach (ServerAnswer answer in question.answers)//לולאה לבדיקה בכל תשובה
 				{
 					AnswerData unityAnswer = new AnswerData();
-					unityAnswer.isCorrect = answer.isCorrect;
+					unityAnswer.isCorrect = answer.isCorrect;//מה היא התשובה הנכונה
 
-					if (answer.isPhoto == true)
+					if (answer.isPhoto == true) //בדיקה האם תוכן התשובה הוא תמונה
 					{
 						unityAnswer.spriteContent = await LoadImage(answer.answerContent);
 					}
@@ -96,7 +98,7 @@ public class ServerManagerScript : MonoBehaviour
 				UnityGame.questionList.Add(unityQuestion);
 			}
 
-			// Start the game after successful data retrieval
+
 			return UnityGame; // החזרת משחק
 
 
@@ -108,9 +110,9 @@ public class ServerManagerScript : MonoBehaviour
 		}
 	}
 
-	private async Task<Sprite> LoadImage(string imageName)
+	private async Task<Sprite> LoadImage(string imageName) //טעינת תמונה מהשרת לפי שם התמונה
 	{
-		if (string.IsNullOrEmpty(imageName) == true)
+		if (string.IsNullOrEmpty(imageName) == true) //בדיקה האם שם התמונה קיים
 		{
 			return null;
 		}

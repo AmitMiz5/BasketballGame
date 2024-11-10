@@ -19,7 +19,7 @@ public class StartScript : MonoBehaviour
     {
         gameManager.madHitkadmut.SetActive(false);//הסתרת מד התקדמות
         allStartScreen.SetActive(true); // כלל האובייקטים יופיעו על המסך
-        startButton.SetActive(true);
+        startButton.SetActive(true);//הצגת כפתור התחלה
 
     }
 
@@ -28,13 +28,8 @@ public class StartScript : MonoBehaviour
     {
 
 
-        serverManager.CheckCode(inputField.text);
+        serverManager.CheckCode(inputField.text); //קריאה לפונקציה שבודקת את הקוד מתוך סקריפט החיבור לשרת
 
 
-        //else // במידה והקוד אינו תקין
-        //{
-        //    txt.text = "יש להזין מספר תקין"; // שינוי הנחיית המשתמש והצגת שגיאה
-        //    inputField.text = ""; // ניקוי תיבת הטקסט
-        //}
     }
 }

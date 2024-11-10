@@ -126,7 +126,7 @@ namespace template.Server.Controllers
 
         public static async Task<bool> CanPublishFunc(int gameId, DbRepository db)
         {
-            int minQuestions = 10;
+            int minQuestions = 2;
             bool canPublish = false;
 
             var param = new { ID = gameId };
@@ -218,7 +218,7 @@ namespace template.Server.Controllers
                     GameName = gameToAdd.GameName,
                     GameCode = 0,
                     IsPublish = false,
-                    QuestionTime = 60,
+                    QuestionTime = gameToAdd.QuestionTime,
                     UserId = authUserId,
                     CanPublish = false
                 };

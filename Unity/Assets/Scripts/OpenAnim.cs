@@ -16,31 +16,25 @@ public class OpenAnim : MonoBehaviour
     [SerializeField] private GameObject allOpenAnim; // כלל האובייקטים של אנימציית הפתיחה
     [SerializeField] private GameObject allGameManager; //כלל האובייקטים של המשחק
     [SerializeField] private PlayableDirector playableDirector; // To control the timeline
-    public GameObject skipButton;
+    public GameObject skipButton; //כפתור דילוג
 
 
-    // Start is called before the first frame update
     void Start()
     {
 
-        playableDirector = GetComponent<PlayableDirector>();
-        playableDirector.stopped += OnTimelineStopped;
+        playableDirector = GetComponent<PlayableDirector>();//מציאת ושמירת playableDirector כמשתנה חדש
+        playableDirector.stopped += OnTimelineStopped;//חיבור הפונקצייה לארוע עצירה שישמש בעצירה או דילוג על האנימצייה
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+   
 
     public void PlayOpenAnim() //פונקציה להתחלת אנימציית פתיחה
     {
-
         Debug.Log("Starting opening animation");
-        allOpenAnim.SetActive(true);
-        skipButton.SetActive(true);
-        playableDirector.Play();
+        allOpenAnim.SetActive(true);//הצגת כל האובייקטים של אנימציית הפתיחה
+        skipButton.SetActive(true);//הצגת כפתור דילוג
+        playableDirector.Play();//הפעלת הטיימליין של האנימצייה
         Debug.Log("Timeline started");
 
 
@@ -50,7 +44,7 @@ public class OpenAnim : MonoBehaviour
 
     public void Skip()
     {
-        playableDirector.Stop();
+        playableDirector.Stop(); //עצירת הטיימליין
         allOpenAnim.SetActive(false); // כלל האובייקטים יוסרו מהמסך
         skipButton.SetActive(false);
         //gameManager.StartGame();// קריאה לפונקציה שמתחילה את המשחק מתוך הגיים מנג'ר
@@ -58,12 +52,10 @@ public class OpenAnim : MonoBehaviour
 
     }
 
-    private void OnTimelineStopped(PlayableDirector director)
+    private void OnTimelineStopped(PlayableDirector director) //פונקצייה שנקראת כאשר הטיימליין נעצר או באופן טבעי לאחר הרצה מלאה או לאחר לחיצה על כפתור דלג
     {
         allOpenAnim.SetActive(false); // כלל האובייקטים יוסרו מהמסך
         Debug.Log("Timeline finished, starting the game");
-        //allGameManager.SetActive(true);
-        //gameManager.madHitkadmut.SetActive(true);
         gameManager.StartGame();// קריאה לפונקציה שמתחילה את המשחק מתוך הגיים מנג'ר
 
     }

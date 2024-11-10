@@ -12,5 +12,7 @@ namespace template.Shared.Models.Game
         [Required(ErrorMessage = "שדה זה חובה")]
         [MinLength(2, ErrorMessage = "יש להזין לפחות 2 תווים")]
         public string GameName { get; set; }
+        public int QuestionTime { get; set; }
+
     }
 }

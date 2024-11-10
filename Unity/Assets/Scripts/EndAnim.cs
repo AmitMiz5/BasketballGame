@@ -24,50 +24,42 @@ public class EndAnim : MonoBehaviour
     public GameObject skipButton;
     public EndScript end; //קישור לסקריפט סיום המשחק
 
-    // Start is called before the first frame update
+    
     void Start()
     {
-        playableDirector = GetComponent<PlayableDirector>();
-        playableDirector.stopped += OnTimelineStopped;
+        playableDirector = GetComponent<PlayableDirector>();//מציאת ושמירת playableDirector כמשתנה חדש
+        playableDirector.stopped += OnTimelineStopped;//חיבור הפונקצייה לארוע עצירה שישמש בעצירה או דילוג על האנימצייה
     }
 
-    public void PlayCloseAnim() //פונקציה להתחלת אנימציית פתיחה
+    public void PlayCloseAnim() //פונקציה להתחלת אנימציית סיום
     {
-        gameManager.pauseButton.SetActive(false);//הסתרת כפתור השהייה
-        allGameManager.SetActive(false);
+
+        allGameManager.SetActive(false);//הסתרת כלל האובייקטים של המשחק
         gameManager.madHitkadmut.SetActive(false);//הסתרת מד התקדמות
-        player.SetActive(false);
-        allCloseAnim.SetActive(true);
-        skipButton.SetActive(true);
+        player.SetActive(false);//הסתרת השחקנית
+        allCloseAnim.SetActive(true);//הצגת האובייקטים של אנימציית סיום
+        skipButton.SetActive(true);//הצגת כפתור דילוג
         gameManager.timer.enabled = false;// הסתרת טיימר
         gameManager.progress.enabled = false;//הסתרת כמות תשובות נכונות
-        playableDirector.Play();
-
+        playableDirector.Play();//הפעלת הטיימליין של האנימציה
 
 
     }
 
-    public void Skip()
+    public void Skip()//פונקציה לעצירת האנימציה
     {
         playableDirector.Stop();
-        //allCloseAnim.SetActive(false); // כלל האובייקטים יוסרו מהמסך
-        //skipButton.SetActive(false);
-        //gameManager.StartGame();// קריאה לפונקציה שמתחילה את המשחק מתוך הגיים מנג'ר
 
 
     }
 
-    private void OnTimelineStopped(PlayableDirector director)
+    private void OnTimelineStopped(PlayableDirector director) //כאשר האנימצייה נעצרה
     {
-        skipButton.SetActive(false);
-        allCloseAnim.SetActive(false); // כלל האובייקטים יוסרו מהמסך
+        skipButton.SetActive(false);//הסתרת כפתור דילוג
+        allCloseAnim.SetActive(false); // כלל האובייקטים של אנימציית הסיום יוסרו מהמסך
         Debug.Log("Timeline finished, ending the game");
-        end.EndGameScreen();
+        end.EndGameScreen();//קריאה לפונקציה המציגה את מסך הסיום
 
     }
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+   
 }

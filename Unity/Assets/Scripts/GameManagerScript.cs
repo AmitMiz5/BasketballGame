@@ -13,8 +13,8 @@ public class GameManagerScript : MonoBehaviour
 
     public int totalQuestionCount; // כמות סך כל השאלות
 
-    //private int currentQuestionIndex = 0;
-    [SerializeField] private QuestionImageScript questionImageScript;
+    
+    [SerializeField] private QuestionImageScript questionImageScript; //קישור לסקריפט הגדלת תמונות בשאלה
 
     [SerializeField] private GameObject answerPrefab; // פריפאבים של התשובות
     [SerializeField] private TextMeshPro questionTxt; // טקסט השאלה
@@ -49,12 +49,12 @@ public class GameManagerScript : MonoBehaviour
     public int randomIndex; // אינדקס רנדומלי לשאלות
     public int ansrandomIndex; // אינקס רנדומלי לתשובות
     private bool isGameStarted; // בדיקה האם משחק התחיל
-    [SerializeField] private Slider progressSlider;
+    [SerializeField] private Slider progressSlider; //אובייקט מסוג סליידר -מד ההתקדמות
     public GameObject madHitkadmut;// משתנה לשמירת מד התקדמות
-    public Progress progressBar;
+    public Progress progressBar;//יכיל את הסליידר ואת כמות השאלות
     public float score;//משתנה לשמירת הציון
     //[SerializeField] TextMeshProUGUI scoreTxt;//טקסט בו יופיע הציון
-    private int initialQuestionCount;
+    private int initialQuestionCount;//כמות השאלות המקורית
     public GameObject crowdBlur;// קהל סטטי
     public GameObject crowdCheer;// קהל תשובה נכונה
     public GameObject correct;// חיווי טקסט תשובה נכונה
@@ -77,7 +77,7 @@ public class GameManagerScript : MonoBehaviour
 
         bgSoundSource.clip = bgSound; // הגדרת מקור השמע לסאונד רקע
         SetAoudioBG(); // קישור לפונקציה המפעילה את הסאונד
-        if (questionImageScript != null)
+        if (questionImageScript != null) //בדיקה שסקריפט הגדלת תמונה מחובר
         {
             questionImageScript.questionImage = questionImage;
         }
@@ -154,10 +154,10 @@ public class GameManagerScript : MonoBehaviour
         madHitkadmut.SetActive(true);//הצגת מד ההתקדמות על המסך
         pauseButton.SetActive(true);//הצגת כפתור עצירה על המסך
         allGameManager.SetActive(true);// הצגת כלל האובייקטים על המסך
-        playerObj.SetActive(true);
+        playerObj.SetActive(true);//הצגת השחקנית על המסך
         timer.enabled = true;// הצגת טיימר
         progress.enabled = true;//הצגת כמות תשובות נכונות
-        progressBar = new Progress(progressSlider, totalQuestionCount);
+        progressBar = new Progress(progressSlider, totalQuestionCount);//יצירת אובייקט חדש שינהל את מד ההתקדמות
         countCorrectAnswer = 0; // איפוס כמות התשובות הנכונות
         nextBtnTxt.text = "שאלה הבאה";// הגדרת מלל בפתור לשאלה הבאה
         activeTimer = false; //טיימר לא פעיל
@@ -168,16 +168,13 @@ public class GameManagerScript : MonoBehaviour
         }
 
         totalQuestionCount = tempQusetionList.Count;// עדכון מספר השאלות הכולל
-        initialQuestionCount = totalQuestionCount;
+        initialQuestionCount = totalQuestionCount;//שמירת המספר ההתחלתי של השאלות ברשימה הזמנית
         progress.text = "0/" + totalQuestionCount.ToString(); //  עדכון סך השאלות הנכונות שנענו במשחק מתוך סך השאלות 
         startTime = DateTime.Now; //  הזמן של התחלת המשחק
         isGameStarted = true; // סימן שהמשחק התחיל
         CreateQuestion(); // קריאה לפונקצית יצירת שאלה
-
-
-
-        progressBar.resetProgressBar();
-        resetScore();
+        progressBar.resetProgressBar(); // אתחול מד ההתקדמות לתחילת המשחק
+        resetScore(); // איפוס הניקוד לתחילת המשחק
 
 
 
@@ -199,7 +196,7 @@ public class GameManagerScript : MonoBehaviour
     {
         int indexToRemove = (int)randomIndex; // אינדקס להסרת השאלה
 
-        if (indexToRemove >= 0 && indexToRemove < tempQusetionList.Count) //// בדיקת תקינות האינדקס
+        if (indexToRemove >= 0 && indexToRemove < tempQusetionList.Count) // בדיקת תקינות האינדקס
         {
             tempQusetionList.RemoveAt(indexToRemove); // הסרת השאלה מהרשימה הזמנית
         }
@@ -234,13 +231,12 @@ public class GameManagerScript : MonoBehaviour
     public void ProgressCounter()  // כמות תשובות נכונות
     {
         countCorrectAnswer++; // העלאת כמות התשובות הנכונות באחד
-        Debug.Log($"ProgressCounter called. countCorrectAnswer: {countCorrectAnswer}, totalQuestionCount: {totalQuestionCount}");
         if (countCorrectAnswer == totalQuestionCount) // בדיקה האם כמות התשובות הנכונה שווה לכמות שאלות במשחק
         {
             nextBtnTxt.text = "סיים משחק"; // שינוי טקסט כפתור לסיים משחק במקום שאלה הבאה
         }
         progress.text = (countCorrectAnswer).ToString() + "/" + totalQuestionCount.ToString(); // עדכון טקסט של התקדמות המשחק
-        progressBar.incrementProgress(initialQuestionCount);
+        progressBar.incrementProgress(initialQuestionCount); //עדכון מד ההתקדמות לפי התקדמות התשובות הנכונות
 
 
     }
@@ -286,16 +282,13 @@ public class GameManagerScript : MonoBehaviour
         questionTime = game.questionTime; //כמה זמן יש לכל שאלה
 
 
-        questionImage.sprite = CurrentQuestion.spriteContent; // Set the question image sprite
+        questionImage.sprite = CurrentQuestion.spriteContent; // הגדרת תמונה לשאלה הנוכחית
 
         if (questionImageScript != null)
         {
-            questionImageScript.ResetScale(); // Reset the scale when creating a new question
+            questionImageScript.ResetScale(); // איפוס גודל התמונה
         }
-        else
-        {
-            Debug.LogError("QuestionImageScript is not assigned!");
-        }
+        
 
     }
 
@@ -313,20 +306,21 @@ public class GameManagerScript : MonoBehaviour
         player.ReturnPlayerToDefaultPosition(); // החזרת השחקן למיקום הראשי
         player.AllowPlayerToMove(); // הרשאת תנועת השחקן
 
-        if (countCorrectAnswer == totalQuestionCount)
+        if (countCorrectAnswer == totalQuestionCount) //אם כמות התשובות הנכונות שווה לכמות השאלות במשחק
         {
+            // שינוי טקסט השאלה ל״המשחק הסתיים״
             questionTxt.text = "המשחק הסתיים";
 
             if (endAnim != null)
             {
-                endAnim.PlayCloseAnim();
+                endAnim.PlayCloseAnim(); //הפעלת אנימציית סיום
             }
-            else
+            else 
             {
                 Debug.LogError("EndAnim reference is missing! Please assign it in the Inspector.");
             }
         }
-        else
+        else // קישור לפונקציית יצירת שאלה נוספת
         {
             CreateQuestion();
         }
@@ -372,19 +366,19 @@ public class GameManagerScript : MonoBehaviour
         return closestPodium; // החזרת הפודיום הקרוב ביותר לשחקן
     }
 
-    public void UpdateScore(bool answer)
+    public void UpdateScore(bool answer) // עדכון ניקוד
     {
         Debug.Log("question number" + randomIndex);
         Debug.Log("answer: " + answer);
 
-        if (answer == true)
+        if (answer == true) // אם התשובה נכונה
         {
             Debug.Log("Points for current question: " + 100 / (tempQusetionList[randomIndex].tryCount * totalQuestionCount));
-
+            // חישוב הניקוד שניתן לשאלה זו
             score += 100 / (tempQusetionList[randomIndex].tryCount * totalQuestionCount);
-            tempQusetionList.RemoveAt(randomIndex);
+            tempQusetionList.RemoveAt(randomIndex);  // הסרת השאלה הנוכחית מהרשימה כדי שלא תחזור שוב
         }
-        else
+        else // אם התשובה שגויה, נעדכן את ספירת הניסיונות עבור השאלה
         {
             tempQusetionList[randomIndex].tryCount++;
         }
@@ -393,26 +387,26 @@ public class GameManagerScript : MonoBehaviour
 
     }
 
-    public void resetScore()
+    public void resetScore() //איפוס הציון
     {
         score = 0;
     }
 
 
-    public void GetGame(GameData gameFromServer)
+    public void GetGame(GameData gameFromServer) // פונקציה לקבלת נתוני משחק מהשרת
     {
-        game = gameFromServer;
-        randomIndex = 0;
+        game = gameFromServer; // שמירת נתוני המשחק שהתקבלו מהשרת במשתנה המקומי game
+        randomIndex = 0; // אתחול האינדקס הרנדומלי ל - 0
         allStartScreen.SetActive(false); // העלמת כל האובייקטים
         inputField.text = ""; // ניקוי תיבת הטקסט
         openAnim.PlayOpenAnim(); // קריאה לפונקציה שמתחילה את אנימציית הפתיחה
     }
 
-    public void RepeatGame()
+    public void RepeatGame() //פונקצייה להתחלת אותו המשחק מחדש
     {
-        endSpcript.allEndScreen.SetActive(false);
+        endSpcript.allEndScreen.SetActive(false);//הסתרת כל האובייקטים של מסך הסיום
 
-        StartGame();
+        StartGame();// קריאה לפונקציית התחלת המשחק
     }
 
 }

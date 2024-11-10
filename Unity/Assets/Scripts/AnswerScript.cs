@@ -52,19 +52,19 @@ public class AnswerScript : MonoBehaviour
 
     void OnMouseEnter()
     {
-        // Enlarge only if the answerImage exists and has a sprite assigned
+        // הגדלת תמונה במידה וקיימת תמונה במסיח
         if (answerImage != null && answerImage.sprite != null)
         {
-            answerImage.transform.localScale = enlargedImageScale; // Enlarge the image only
+            answerImage.transform.localScale = enlargedImageScale; // הגדלת רק התמונה
         }
     }
 
     void OnMouseExit()
     {
-        // Revert the image size if the answerImage exists and has a sprite assigned
+        // הקטנת התמונה לגודל המקורי כשהעכבר יוצא משטח המסיח 
         if (answerImage != null && answerImage.sprite != null)
         {
-            answerImage.transform.localScale = originalImageScale; // Revert the image to its original size
+            answerImage.transform.localScale = originalImageScale;
         }
     }
 
@@ -132,6 +132,6 @@ public class AnswerScript : MonoBehaviour
             gameManager.UpdateScore(false);
         }
 
-        return isCorrect;
+        return isCorrect; // החזרת ערך בוליאני (true אם התשובה נכונה, אחרת false)
     }
 }
