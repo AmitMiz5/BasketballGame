@@ -8,6 +8,11 @@
     </button>
 </Tooltip>
 
+@if (showConfetti)
+{
+    <img src="/Icons/Conffeti.svg" alt="Confetti Celebration" class="confetti-image @(fadeOut ? "fade-out" : "show")" />
+}
+
 <style>
     .publish-button {
         width: 143px;
@@ -19,12 +24,12 @@
         }
 
         .publish-button.published {
-            background-color: #FFA500;
+            background-color: #EF7853;
             color: white;
         }
 
         .publish-button.to-publish {
-            background-color: blue;
+            background-color: #4F97D7;
             color: white;
         }
 
@@ -35,6 +40,20 @@
         .publish-button:active:not([disabled]) {
             transform: scale(0.95);
         }
+
+          .confetti-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        object-fit: cover;
+        z-index: 1000;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+         }
+   
 </style>
 
 @code {
@@ -46,6 +65,9 @@
 
     [Parameter]
     public Action<ToastMessage> OnShowToast { get; set; }
+
+    private bool showConfetti = false;
+    private bool fadeOut = false;
 
     private async Task TogglePublish()
     {
@@ -66,16 +88,28 @@
 
         if (publishGameResponse.IsSuccessStatusCode)
         {
+            bool wasUnpublished = !game.IsPublish; 
             game.IsPublish = !game.IsPublish;
             game.LastUpdated = DateTime.Now;
+
             if (OnGameUpdated.HasDelegate)
             {
                 await OnGameUpdated.InvokeAsync(null);
             }
 
+            if (wasUnpublished && game.IsPublish)
+            {
+                showConfetti = true;
+                StateHasChanged();
+                await Task.Delay(2000); 
+                showConfetti = false;
+                StateHasChanged();
+            }
+
             string successMessage = game.IsPublish ? "המשחק פורסם בהצלחה" : "הפרסום בוטל בהצלחה";
             OnShowToast?.Invoke(new ToastMessage { Message = successMessage, Type = "success" });
         }
+
         else
         {
             if (error == "thisGameCannotBePublished")

@@ -14,7 +14,9 @@
     <EditForm Model="gameToAdd" OnValidSubmit="CreateGame" class="create-game-form">
         <DataAnnotationsValidator />
         <div class="form-field-inline">
-            <input type="text" @bind="gameToAdd.GameName" class="input-field" placeholder="הכנס שם משחק" required minlength="2" />
+            <CustomInputText @bind-Value="gameToAdd.GameName" maxLength="40" midLength="35" minLength="2" placeholder="שם המשחק" />
+
+            @* <input type="text" @bind="gameToAdd.GameName" class="input-field" placeholder="הכנס שם משחק" required minlength="2" /> *@
 
             <input type="submit" value="יצירת משחק" class="base-button" />
         </div>
@@ -51,7 +53,7 @@
                             </button>
                         </Tooltip>
 
-                        <GameSettings game="game" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
+                        <GameSettings game="game" ImageSrc="/Icons/SettingsIcon.svg" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
 
                         <ConfirmPopup TitleText="מחיקת משחק"
                                       BodyText=@($"האם אתה בטוח שברצונך למחוק את משחק '{game.GameName}'?")

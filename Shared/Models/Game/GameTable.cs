@@ -12,6 +12,7 @@ namespace template.Shared.Models.Game
         public int ID { get; set; }
         [Required(ErrorMessage = "שדה זה חובה")]
         [MinLength(2, ErrorMessage = "השם חייב לכלול לפחות 2 תווים שאחד מהם הוא לא רווח")]
+        [MaxLength(40, ErrorMessage = "יש לתת שם עד 40 תווים ")]
         public string GameName { get; set; }
         public int GameCode { get; set; }
         public bool IsPublish { get; set; }
