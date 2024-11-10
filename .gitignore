@@ -48,8 +48,6 @@ packages/
 node_modules/
 
 # Publish output
-publish/
-wwwroot/
 
 # Mac/Linux file system
 .DS_Store
@@ -62,17 +60,6 @@ __MACOSX/
 logs/
 *.log
 
-# Razor and Blazor specific files
-wwwroot/css/app.css
-wwwroot/css/app.css.map
-wwwroot/css/
-wwwroot/js/
-wwwroot/css/bootstrap.min.css
-wwwroot/index.html
-wwwroot/favicon.ico
-wwwroot/_framework/_bin/
-wwwroot/_framework/_blazor.*
-wwwroot/_framework/_blazor.boot.json
 
 # Entity Framework generated files
 Migrations/
