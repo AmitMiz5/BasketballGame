@@ -1,7 +1,6 @@
 ﻿@inject HttpClient Http
 
-
-<div class="tooltip-container" @onmousemove="ShowTooltipHandler" @onmouseout="HideTooltipHandler">
+<div class="tooltip-container" style="@ParentStyle" @onmousemove="ShowTooltipHandler" @onmouseout="HideTooltipHandler">
     @ChildContent
     @if (ShowTooltip && !string.IsNullOrWhiteSpace(TooltipText))
     {
@@ -18,7 +17,7 @@
     }
 
     .tooltip-box {
-        position: fixed; /* Position relative to viewport */
+        position: fixed;
         background-color: rgba(107, 174, 255, 0.9);
         color: #fff;
         padding: 6px 10px;
@@ -53,6 +52,9 @@
 
     [Parameter]
     public string TooltipText { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ParentStyle { get; set; } = string.Empty;
 
     private void ShowTooltipHandler(MouseEventArgs e)
     {

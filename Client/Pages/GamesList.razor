@@ -10,17 +10,7 @@
 <h4 class="GamesList__subtitle">סך כל המשחקים: @MyGamesList.Count</h4>
 
 <div class="GamesLists_newgame">
-    <p class="form-header">הוספת משחק חדש</p>
-    <EditForm Model="gameToAdd" OnValidSubmit="CreateGame" class="create-game-form">
-        <DataAnnotationsValidator />
-        <div class="form-field-inline">
-            <CustomInputText @bind-Value="gameToAdd.GameName" maxLength="40" midLength="35" minLength="2" placeholder="שם המשחק" />
-
-
-            <input type="submit" value="יצירת משחק" class="base-button" />
-        </div>
-        <ValidationMessage For="@(() => gameToAdd.GameName)" class="error-message" />
-    </EditForm>
+    <AddNewGame ImageSrc="/Icons/BBall.png" OnGameUpdated="@LoadGames" OnShowToast=ShowToast />
 </div>
 
 @if (MyGamesList != null)

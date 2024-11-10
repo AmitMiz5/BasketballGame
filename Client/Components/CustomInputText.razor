@@ -1,29 +1,45 @@
 ﻿@inherits Microsoft.AspNetCore.Components.Forms.InputText
 
 <div style="display:flex; flex-direction:column;">
-	<input @attributes="@AdditionalAttributes" class="@CssClass  default-input
-@inputClass"
-		   @bind="@CurrentValueAsString" @bind:event="oninput" @onkeyup="countChars"
-		   maxlength="@maxLength" />
-	<div>@length.ToString()/@maxLength.ToString()</div>
+	@if (textArea)
+	{
+		<textarea @attributes="@AdditionalAttributes" class="@CssClass default-input @inputClass" 
+				  @bind="@CurrentValueAsString" @bind:event="oninput" @onkeyup="countChars"
+				  maxlength="@maxLength" />
+	}
+	else
+	{
+		<input @attributes="@AdditionalAttributes" type="text" class="@CssClass default-input @inputClass"
+			   @bind="@CurrentValueAsString" @bind:event="oninput" @onkeyup="countChars"
+			   maxlength="@maxLength" />
+	}
+	<div style="margin-left:5px;text-align:left;">@length.ToString()/@maxLength.ToString()</div>
 </div>
-
 
 @code {
 	[Parameter]
+	public bool textArea { get; set; } = false;
+
+	[Parameter]
 	public int minLength { get; set; } = 2;
-		[Parameter]
+	[Parameter]
 	public int midLength { get; set; } = 7;
-		[Parameter]
+	[Parameter]
 	public int maxLength { get; set; } = 15;
- 
+
 	string inputClass = "";
 
 	int length = 0;
 
+	protected override void OnParametersSet()
+	{
+		base.OnParametersSet();
+		countChars();
+	}
+
 	void countChars()
 	{
-		length = CurrentValueAsString.Length;
+		length = CurrentValueAsString?.Length ?? 0;
 		if (length >= minLength && length < midLength)
 		{
 			inputClass = "good-input";
@@ -37,6 +53,4 @@
 			inputClass = "danger-input";
 		}
 	}
-
 }
-

@@ -1,0 +1,129 @@
+﻿@inject HttpClient Http;
+@using template.Shared.Models.Game;
+@using template.Shared.Models;
+
+<div style="position: relative; display: inline-block;margin-top:15px;">
+    <div style="border-radius: 10px; background-color: #276075; color: white; padding: 5px 15px; display: flex; align-items: center; justify-content: center; width: 200px; height: 35px; box-sizing: border-box; border: 1px solid #692346;">
+        <div style="font-size: 16px; font-weight: bold; color: white;">
+            <span>הוספת משחק חדש</span>
+        </div>
+    </div>
+    <button class="GamesList__action__button" @onclick="OpenPopup" style="position: absolute; top: -30px; right: -30px; border: none; background: none;">
+        <div style="position: relative; width: 50px; height: 50px;">
+            <img src="@ImageSrc" alt="Add Game" style="width: 50px; height: 50px;" />
+            <div style="
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 50px;
+                font-weight: bold;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;">
+                +
+            </div>
+        </div>
+    </button>
+</div>
+
+
+
+<div class="confirm-popup-overlay" style="display: @(isPopupOpen ? "flex" : "none");">
+    <div class="confirm-popup-container">
+        <img src="/Icons/BgSmallPopUp.png" alt="Popup Background Image" style="width:100% !important;" />
+
+        <button class="confirm-close-button" style="left:50px !important;" @onclick="ClosePopup">X</button>
+
+        <div class="confirm-popup-content" style="margin-top:10px !important;">
+            <div class="confirm-popup-text" style="margin-top:10px !important;">
+                <h3 class="confirm-popup-title">הוספת משחק חדש</h3>
+            </div>
+
+            <EditForm Model="gameToAdd" OnValidSubmit="SaveChanges">
+                <DataAnnotationsValidator />
+
+
+         <div style="display:flex;flex-direction:column;">
+                    <label style="text-align:right;" for="gameName">שם המשחק:</label>
+                    <CustomInputText @bind-Value="gameToAdd.GameName" maxLength="40" midLength="35" minLength="2" placeholder="שם המשחק" style="margin-bottom:10px;" />
+                    <ValidationMessage For="@(() => gameToAdd.GameName)" class="error-message" style="color:white;"/>
+         </div>
+
+
+                <div style="margin-top:10px;display:flex;flex-direction:column;align-items:flex-start;">
+                    <label for="questionTime">זמן לכל שאלה:</label>
+                    <select id="questionTime" @bind="gameToAdd.QuestionTime" class="confirm-popup-select" style="width:100%;margin-bottom: 10px;">
+                        <option value="30">30 שניות</option>
+                        <option value="60">60 שניות</option>
+                        <option value="90">90 שניות</option>
+                        <option value="0">ללא הגבלה</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="confirm-confirm-button" style="margin-bottom:20px;">יצירת משחק</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public GameToAdd gameToAdd { get; set; } = new GameToAdd();
+
+    [Parameter]
+    public EventCallback OnGameUpdated { get; set; }
+
+    [Parameter]
+    public Action<ToastMessage> OnShowToast { get; set; }
+
+    List<GameTable> MyGamesList = new List<GameTable>();
+
+    [Parameter]
+    public string ImageSrc { get; set; }
+
+    private bool isPopupOpen = false;
+
+    private void OpenPopup()
+    {
+        isPopupOpen = true;
+    }
+
+    private void ClosePopup()
+    {
+        isPopupOpen = false;
+    }
+
+    private async Task SaveChanges()
+    {
+        await CreateGame(gameToAdd);
+        ClosePopup();
+    }
+
+    async Task CreateGame(GameToAdd gameToAdd)
+    {
+        var newGameRes = await Http.PostAsJsonAsync("api/Table/addGame/", gameToAdd);
+        if (newGameRes.IsSuccessStatusCode)
+        {
+            await OnGameUpdated.InvokeAsync();
+
+            GameTable newGame = await newGameRes.Content.ReadFromJsonAsync<GameTable>();
+
+            newGame.LastUpdated = DateTime.Now;
+            MyGamesList.Insert(0, newGame);
+            gameToAdd.GameName = "";
+
+            OnShowToast?.Invoke(new ToastMessage { Message = "המשחק נוסף בהצלחה", Type = "success" });
+        }
+        else
+        {
+            string error = await newGameRes.Content.ReadAsStringAsync();
+            OnShowToast?.Invoke(new ToastMessage { Message = "שגיאה בהוספת המשחק: " + error, Type = "error" });
+        }
+
+      
+
+
+    }
+}

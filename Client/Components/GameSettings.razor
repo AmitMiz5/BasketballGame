@@ -2,7 +2,7 @@
 @using template.Shared.Models.Game;
 @using template.Shared.Models;
 
-<Tooltip TooltipText="הגדרות משחק">
+<Tooltip TooltipText="הגדרות משחק" ParentStyle="margin-right:auto;">
     <button class="GamesList__action__button" @onclick="OpenPopup">
         <img src=@ImageSrc alt="Settings" class="GamesList__action__icon" />
     </button>
@@ -10,32 +10,37 @@
 
 <div class="confirm-popup-overlay" style="display: @(isPopupOpen ? "flex" : "none");">
     <div class="confirm-popup-container">
-        <img src="/Icons/BgSmallPopUp.png" alt="Popup Background Image" />
+        <img src="/Icons/BgSmallPopUp.png" alt="Popup Background Image" style="width:100% !important;" />
 
-        <button class="confirm-close-button" @onclick="ClosePopup">X</button>
+        <button class="confirm-close-button" style="left:50px !important;" @onclick="ClosePopup">X</button>
 
-        <div class="confirm-popup-content">
-            <div class="confirm-popup-text">
-                <h3 class="confirm-popup-title">עריכת משחק</h3>
+        <div class="confirm-popup-content" style="margin-top:10px !important;">
+            <div class="confirm-popup-text" style="margin-top:10px !important;">
+                <h3 class="confirm-popup-title">הגדרות משחק</h3>
             </div>
 
             <EditForm Model="game" OnValidSubmit="SaveChanges">
                 <DataAnnotationsValidator />
 
-                <label style="margin-bottom: 20px;" for="gameName">שם המשחק:</label>
-                <CustomInputText @bind-Value="game.GameName" maxLength="40" midLength="35" minLength="2" placeholder="שם המשחק" style="margin-bottom:20px;" />
-                <ValidationMessage For="@(() => game.GameName)" class="error-message"/> 
+
+                <div style="display:flex;flex-direction:column;">
+                    <label style="text-align:right;" for="gameName">שם המשחק:</label>
+                    <CustomInputText @bind-Value="game.GameName" maxLength="40" midLength="35" minLength="2" placeholder="שם המשחק" style="margin-bottom:10px;" />
+                    <ValidationMessage For="@(() => game.GameName)" class="error-message" style="color:white;" />
+                </div>
 
 
-                <label for="questionTime">זמן לכל שאלה:</label>
-                <select id="questionTime" @bind="game.QuestionTime" class="confirm-popup-select" style="margin-bottom: 20px;">
-                    <option value="30">30 שניות</option>
-                    <option value="60">60 שניות</option>
-                    <option value="90">90 שניות</option>
-                    <option value="0">ללא הגבלה</option>
-                </select>
+                <div style="margin-top:10px;display:flex;flex-direction:column;align-items:flex-start;">
+                    <label for="questionTime">זמן לכל שאלה:</label>
+                    <select id="questionTime" @bind="game.QuestionTime" class="confirm-popup-select" style="width:100%;margin-bottom: 10px;">
+                        <option value="30">30 שניות</option>
+                        <option value="60">60 שניות</option>
+                        <option value="90">90 שניות</option>
+                        <option value="0">ללא הגבלה</option>
+                    </select>
+                </div>
 
-                <button type="submit" class="confirm-confirm-button">שמור שינויים</button>
+                <button type="submit" class="confirm-confirm-button" style="margin-bottom:20px;">שמירת שינויים</button>
             </EditForm>
         </div>
     </div>

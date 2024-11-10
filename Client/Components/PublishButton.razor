@@ -8,10 +8,7 @@
     </button>
 </Tooltip>
 
-@if (showConfetti)
-{
-    <img src="/Icons/Conffeti.svg" alt="Confetti Celebration" class="confetti-image @(fadeOut ? "fade-out" : "show")" />
-}
+<img src="/Icons/Confetti.svg" alt="Confetti Celebration" class="confetti-image @(showConfetti ? "show" : "")" />
 
 <style>
     .publish-button {
@@ -41,7 +38,7 @@
             transform: scale(0.95);
         }
 
-          .confetti-image {
+    .confetti-image {
         position: fixed;
         top: 0;
         left: 0;
@@ -52,8 +49,11 @@
         pointer-events: none;
         opacity: 0;
         transition: opacity 1s ease-in-out;
-         }
-   
+    }
+
+        .confetti-image.show {
+            opacity: 1;
+        }
 </style>
 
 @code {
@@ -67,7 +67,6 @@
     public Action<ToastMessage> OnShowToast { get; set; }
 
     private bool showConfetti = false;
-    private bool fadeOut = false;
 
     private async Task TogglePublish()
     {
@@ -88,20 +87,22 @@
 
         if (publishGameResponse.IsSuccessStatusCode)
         {
-            bool wasUnpublished = !game.IsPublish; 
+            bool wasUnpublished = !game.IsPublish;
             game.IsPublish = !game.IsPublish;
             game.LastUpdated = DateTime.Now;
 
             if (OnGameUpdated.HasDelegate)
             {
-                await OnGameUpdated.InvokeAsync(null);
+                await OnGameUpdated.InvokeAsync();
             }
 
             if (wasUnpublished && game.IsPublish)
             {
                 showConfetti = true;
                 StateHasChanged();
-                await Task.Delay(2000); 
+
+                await Task.Delay(2000);
+
                 showConfetti = false;
                 StateHasChanged();
             }
@@ -109,7 +110,6 @@
             string successMessage = game.IsPublish ? "המשחק פורסם בהצלחה" : "הפרסום בוטל בהצלחה";
             OnShowToast?.Invoke(new ToastMessage { Message = successMessage, Type = "success" });
         }
-
         else
         {
             if (error == "thisGameCannotBePublished")
