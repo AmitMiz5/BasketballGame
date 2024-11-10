@@ -87,10 +87,10 @@
 
 
 
-			<div style="height:65vh;position: relative;margin-top:15px;">
+			<div style="max-height:65vh;position: relative;margin-top:15px;">
 				@if (MyQuestionList != null && MyQuestionList.Count > 0)
 				{
-					<div style="height:90%;overflow-y:scroll;">
+					<div style="height:90%;overflow-y: auto;">
 
 						@foreach (QuestionDetails question in MyQuestionList)
 						{
