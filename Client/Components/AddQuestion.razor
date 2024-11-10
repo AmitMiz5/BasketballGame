@@ -9,7 +9,7 @@
     <DataAnnotationsValidator />
 
    
-    <div style="width: 100%; margin-bottom: 15px;">
+    <div style="width: 100%;">
         <label for="question-text" style="display: block; font-weight: bold; font-size: 18px;">
             @(QuestionId != null ? "עריכת שאלה:" : "הוספת שאלה חדשה:")
         </label>
@@ -19,20 +19,13 @@
         <div style="display:flex; align-items: center;">
             @if (!string.IsNullOrEmpty(questionToAdd.QuestionText) && questionToAdd.QuestionText.Length >= 2)
             {
-                <span style="display: inline-flex; align-items: center; justify-content: center; background-color: white; color: green; border-radius: 50%; width: 16px; height: 16px; font-size: 12px; margin-left: 5px;">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="0 0 24 24" width="24px" height="24px">
-                        <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm-1.2 18L5 11.2l1.4-1.4 4.4 4.4L17.6 7l1.4 1.4L10.8 18z" />
-                    </svg>
-                </span>
+                <CheckIcon />
+
             }
 
             else
             {
-                <span style="display: inline-flex; align-items: center; justify-content: center; background-color: white; color: red; border-radius: 50%; width: 16px; height: 16px; font-size: 8px; margin-left: 5px;">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" width="24px" height="24px">
-                        <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm5.656 16.242l-1.414 1.414L12 13.414l-4.242 4.242-1.414-1.414L10.586 12l-4.242-4.242 1.414-1.414L12 10.586l4.242-4.242 1.414 1.414L13.414 12l4.242 4.242z" />
-                    </svg>
-                </span>
+               <ErrorIcon/>
             }
             <div> גזע השאלה חייב להכיל לפחות תו אחד שאינו רווח</div>
         </div>
@@ -75,7 +68,7 @@
         </div>
     </div>
 
-    <div style="display: flex; gap: 20px; align-items: center;">
+    <div style="display: flex; gap: 20px;">
 
         @{
             int answersWithContentCount = answers.Count(answer => !string.IsNullOrEmpty(answer.AnswerContent) && answer.AnswerContent.Length >= 2);
@@ -83,44 +76,31 @@
 
         }
 
-        <div>
+        <div style="display:flex; align-items: center;">
             @if (answersWithContentCount >= 2)
             {
-                <span style="display: inline-flex; align-items: center; justify-content: center; background-color: white; color: green; border-radius: 50%; width: 16px; height: 16px; font-size: 12px; margin-left: 5px;">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="0 0 24 24" width="24px" height="24px">
-                        <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm-1.2 18L5 11.2l1.4-1.4 4.4 4.4L17.6 7l1.4 1.4L10.8 18z" />
-                    </svg>
-                </span>
+               <CheckIcon/>
                 <span>לפחות 2 שאלות עם תוכן</span>
             }
             else
             {
-                <span style="display: inline-flex; align-items: center; justify-content: center; background-color: white; color: red; border-radius: 50%; width: 16px; height: 16px; font-size: 8px; margin-left: 5px;">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" width="24px" height="24px">
-                        <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm5.656 16.242l-1.414 1.414L12 13.414l-4.242 4.242-1.414-1.414L10.586 12l-4.242-4.242 1.414-1.414L12 10.586l4.242-4.242z" />
-                    </svg>
-                </span>
+                <ErrorIcon />
+
                 <span>לפחות 2 שאלות עם תוכן</span>
             }
         </div>
 
-        <div>
+        <div style="display:flex; align-items: center;">
             @if (hasCorrectAnswer)
             {
-                <span style="display: inline-flex; align-items: center; justify-content: center; background-color: white; color: green; border-radius: 50%; width: 16px; height: 16px; font-size: 12px; margin-left: 5px;">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="green" viewBox="0 0 24 24" width="24px" height="24px">
-                        <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm-1.2 18L5 11.2l1.4-1.4 4.4 4.4L17.6 7l1.4 1.4L10.8 18z" />
-                    </svg>
-                </span>
+                <CheckIcon />
+
                 <span>לפחות תשובה אחת נכונה</span>
             }
             else
             {
-                <span style="display: inline-flex; align-items: center; justify-content: center; background-color: white; color: red; border-radius: 50%; width: 16px; height: 16px; font-size: 8px; margin-left: 5px;">
-                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="red" viewBox="0 0 24 24" width="24px" height="24px">
-                        <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm5.656 16.242l-1.414 1.414L12 13.414l-4.242 4.242-1.414-1.414L10.586 12l-4.242-4.242 1.414-1.414L12 10.586l4.242-4.242z" />
-                    </svg>
-                </span>
+                <ErrorIcon />
+
                 <span>לפחות תשובה אחת נכונה</span>
             }
         </div>
@@ -196,7 +176,6 @@
             padding: 20px;
         }
 
-            /* Divider between the two sections */
             .answer-section:first-child {
                 border-right: 1px solid #ddd;
             }
@@ -206,7 +185,6 @@
             position: absolute;
         }
 
-        /* Hide the icons when hovering over the input area */
         .answer-section:hover .text-icon,
         .answer-section:hover .image-icon {
             display: none;
@@ -246,7 +224,7 @@
     public int? QuestionId { get; set; }
 
     [Parameter]
-    public EventCallback OnQuestionUpdated { get; set; } // Callback to notify parent of updates
+    public EventCallback OnQuestionUpdated { get; set; } 
 
     [Parameter]
     public QuestionToAdd questionToAdd { get; set; }
@@ -285,7 +263,6 @@
     {
         answers[index].IsPhoto = false;
         answers[index].AnswerContent = null;
-        // ToDo: delete from folder
     }
 
     private bool IsFormValid
@@ -466,6 +443,7 @@
         if (questionRes.IsSuccessStatusCode)
         {
             await OnShowToast.InvokeAsync(new ToastMessage { Message = "שאלה נמחקה בהצלחה", Type = "success" });
+
         }
         else
         {
