@@ -10,7 +10,7 @@
 <h4 class="GamesList__subtitle">סך כל המשחקים: @MyGamesList.Count</h4>
 
 <div class="GamesLists_newgame">
-	<AddNewGame ImageSrc="/Icons/BBall.png" OnGameUpdated="@LoadGames" OnShowToast=ShowToast />
+	<AddNewGame ImageSrc="./Icons/BBall.png" OnGameUpdated="@LoadGames" OnShowToast=ShowToast />
 </div>
 
 @if (MyGamesList != null)
@@ -38,11 +38,11 @@
 						</div>
 						<Tooltip TooltipText="עריכת המשחק">
 							<button class="GamesList__action__button" @onclick="() => NavigateToEditPage(game.ID)">
-								<img src="/Icons/EditIcon.svg" alt="Edit" class="GamesList__action__icon" />
+								<img src="./Icons/EditIcon.svg" alt="Edit" class="GamesList__action__icon" />
 							</button>
 						</Tooltip>
 
-						<GameSettings game="game" ImageSrc="/Icons/SettingsIcon.svg" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
+						<GameSettings game="game" ImageSrc="./Icons/SettingsIcon.svg" OnGameUpdated="@LoadGames" OnShowToast="ShowToast" />
 
 						<ConfirmPopup TitleText="מחיקת משחק"
 									  BodyText=@($"האם אתה בטוח שברצונך למחוק את משחק '{game.GameName}'?")
@@ -52,7 +52,7 @@
 							<OpenButton>
 								<Tooltip TooltipText="מחיקת משחק">
 									<button class="GamesList__action__button">
-										<img src="/Icons/DeleteIcon.svg" alt="Delete" class="GamesList__action__icon" />
+										<img src="./Icons/DeleteIcon.svg" alt="Delete" class="GamesList__action__icon" />
 									</button>
 								</Tooltip>
 							</OpenButton>
@@ -66,7 +66,7 @@
 							<OpenButton>
 								<Tooltip TooltipText="שכפול משחק">
 									<button class="GamesList__action__button">
-										<img src="/Icons/CopyIcon.svg" alt="Copy" class="GamesList__action__icon" />
+										<img src="./Icons/CopyIcon.svg" alt="Copy" class="GamesList__action__icon" />
 									</button>
 								</Tooltip>
 							</OpenButton>
@@ -253,7 +253,7 @@
 
 	private void NavigateToEditPage(int gameId)
 	{
-		Nav.NavigateTo($"/GameEdit/{gameId}");
+		Nav.NavigateTo($"./GameEdit/{gameId}");
 	}
 
 	private void ShowToast(ToastMessage toastMessage)

@@ -41,7 +41,7 @@
 					@if (string.IsNullOrEmpty(questionToAdd.QuestionPhoto))
 					{
 						<label for="FileInputID" style="box-sizing: border-box; width: 150px; height: 89px; background: #FFF5F5; border: 1px solid #000000; color: #0f1111; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'Amazon Ember', sans-serif; font-size: 13px; text-align: center; text-decoration: none; user-select: none; -webkit-user-select: none; touch-action: manipulation; border-radius: 8px;" role="button">
-							<img src="/Icons/ImgIcon.png" alt="Upload Icon" style="width: 40px; height: 40px; margin-bottom: 5px;">
+							<img src="./Icons/ImgIcon.png" alt="Upload Icon" style="width: 40px; height: 40px; margin-bottom: 5px;">
 							<div>בחר תמונה</div>
 							<div style="font-size: 10px; color: #666;">(עד גודל של 2MB)</div>
 						</label>
@@ -61,7 +61,7 @@
 								<img src="data:image/png;base64,@questionToAdd.QuestionPhoto" alt="Uploaded Image" style="width: 150px; height: 89px; border-radius: 8px; object-fit: contain;" />
 							}
 
-							<span class="remove-image" @onclick="() => { questionToAdd.QuestionPhoto = null; }"><img src="/Icons/DeleteIcon.svg" alt="Delete" style="width:18px;height:18px;" /></span>
+							<span class="remove-image" @onclick="() => { questionToAdd.QuestionPhoto = null; }"><img src="./Icons/DeleteIcon.svg" alt="Delete" style="width:18px;height:18px;" /></span>
 						</div>
 					}
 				</div>
@@ -154,7 +154,7 @@
 						}
 						@if (string.IsNullOrEmpty(answers[index].AnswerContent))
 						{
-							<span class="hover-text"><img src="/Icons/Text.png" alt="Text Icon" style="width: 50px; height: 50px;"></span>
+							<span class="hover-text"><img src="./Icons/Text.png" alt="Text Icon" style="width: 50px; height: 50px;"></span>
 						}
 					</div>
 				}
@@ -175,7 +175,7 @@
 						}
 						@if (string.IsNullOrEmpty(answers[index].AnswerContent))
 						{
-							<span class="hover-text"><img src="/Icons/ImgIcon.png" alt="Upload Icon" style="width: 40px; height: 40px;"></span>
+							<span class="hover-text"><img src="./Icons/ImgIcon.png" alt="Upload Icon" style="width: 40px; height: 40px;"></span>
 
 						}
 					</label>
@@ -186,7 +186,7 @@
 				{
 					<span class="delete-answer" style="cursor:pointer;padding:3px;" @onclick:stopPropagation
 						  @onclick='() => {answers[index].AnswerContent = null; answers[index].IsPhoto = false;}'>
-						<img src="/Icons/DeleteIcon.svg" alt="Delete" style="width:18px;height:18px;" />
+						<img src="./Icons/DeleteIcon.svg" alt="Delete" style="width:18px;height:18px;" />
 					</span>
 				}
 			</div>

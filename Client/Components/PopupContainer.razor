@@ -1,7 +1,7 @@
 ﻿
 <div class="popup-overlay" @onclick="OnClose">
     <div class="popup-container" @onclick:stopPropagation="true">
-        <img src="/Icons/BgPopUp.png" class="popup-container-img" alt="Popup Background" />
+        <img src="./Icons/BgPopUp.png" class="popup-container-img" alt="Popup Background" />
         <button class="close-button" @onclick="OnClose">X</button>
         <div class="popup-content">
             @if (!string.IsNullOrEmpty(@Title))

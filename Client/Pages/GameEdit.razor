@@ -23,7 +23,7 @@
 			<span>@game.QuestionTime</span>
 			<span>שניות לשאלה</span> @* הצגת זמן השאלה *@
 		</div>
-		<GameSettings game="game" ImageSrc="/Icons/settingsWhite.svg" OnGameUpdated="LoadGame" OnShowToast="ShowToast" />
+		<GameSettings game="game" ImageSrc="./Icons/settingsWhite.svg" OnGameUpdated="LoadGame" OnShowToast="ShowToast" />
 	</div>
 
 	<div style="display:flex;margin-top:15px;">
@@ -93,7 +93,7 @@
 								<div style="display: flex; gap: 10px;">
 									<Tooltip TooltipText="עריכת השאלה">
 										<button style="border: none; padding: 5px; border-radius: 3px;" @onclick="() => LoadQuestionDetails(question.ID)">
-											<img src="/Icons/EditIcon.svg" alt="Edit" style="height: 24px; width: 24px; border: none" /> @* כפתור לעריכת השאלה *@
+											<img src="./Icons/EditIcon.svg" alt="Edit" style="height: 24px; width: 24px; border: none" /> @* כפתור לעריכת השאלה *@
 										</button>
 									</Tooltip>
 
@@ -105,7 +105,7 @@
 										<OpenButton>
 											<Tooltip TooltipText="מחיקת שאלה">
 												<button style="border: none; padding: 5px; border-radius: 3px;">
-													<img src="/Icons/DeleteIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" /> @* כפתור למחיקת השאלה *@
+													<img src="./Icons/DeleteIcon.svg" alt="Delete" style="height: 24px; width: 24px; border: none" /> @* כפתור למחיקת השאלה *@
 												</button>
 											</Tooltip>
 										</OpenButton>
