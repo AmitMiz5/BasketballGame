@@ -3,7 +3,7 @@
 <div style="display:flex; flex-direction:column;">
 	@if (textArea)
 	{
-		<textarea @attributes="@AdditionalAttributes" class="@CssClass default-input @inputClass" 
+		<textarea @attributes="@AdditionalAttributes" class="@CssClass default-input @inputClass"
 				  @bind="@CurrentValueAsString" @bind:event="oninput" @onkeyup="countChars"
 				  maxlength="@maxLength" />
 	}
@@ -45,7 +45,9 @@
 
 	void countChars()
 	{
-		length = CurrentValueAsString?.Length ?? 0;
+		var trimmedValue = CurrentValueAsString?.Trim();
+		length = trimmedValue?.Length ?? 0;
+
 		if (length >= minLength && length < midLength)
 		{
 			inputClass = "good-input";

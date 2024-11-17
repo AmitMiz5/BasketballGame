@@ -2,18 +2,18 @@
 @using template.Shared.Models.Game;
 @using template.Shared.Models;
 
-<div style="position: relative; display: inline-block;margin-top:15px;">
+<div style="position: relative; display: inline-block;margin-top:15px; cursor:pointer" @onclick="OpenPopup">
     <div style="border-radius: 10px; background-color: #276075; color: white; padding: 5px 15px; display: flex; align-items: center; justify-content: center; width: 200px; height: 35px; box-sizing: border-box; border: 1px solid #692346;">
         <div style="font-size: 16px; font-weight: bold; color: white;">
             <span>הוספת משחק חדש</span> @* טקסט לכפתור הוספת משחק חדש *@
         </div>
     </div>
-    <button class="GamesList__action__button" @onclick="OpenPopup" style="position: absolute; top: -30px; right: -30px; border: none; background: none;">
+    <button class="GamesList__action__button"  style="position: absolute; top: -30px; right: -30px; border: none; background: none;">
         <div style="position: relative; width: 50px; height: 50px;">
             <img src="@ImageSrc" alt="Add Game" style="width: 50px; height: 50px;" /> @* הצגת אייקון כפתור להוספת משחק *@
             <div style="
                 position: absolute;
-                top: 40%;
+                top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
                 font-size: 50px;

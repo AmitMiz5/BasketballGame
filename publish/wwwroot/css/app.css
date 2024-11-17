@@ -2,7 +2,7 @@
 
 
 * {
-    font-family: Segoe UI;
+    font-family: 'Rubik', sans-serif !important
 }
 
 html {
@@ -275,8 +275,9 @@ h1:focus {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
+    font-size: 17px;
     margin: 4px 2px;
+    /* font-weight: 500; */
     cursor: pointer;
     border-radius: 8px;
     transition: background-color 0.3s, transform 0.2s;
@@ -312,7 +313,7 @@ h1:focus {
 }
 
     .confirm-popup-container img {
-        width: 80%;
+        width: 100%;
         height: auto;
         border-radius: 8px;
     }
@@ -320,7 +321,7 @@ h1:focus {
 .confirm-close-button {
     position: absolute;
     top: 10px;
-    left: 80px;
+    left: 40px;
     background-color: transparent;
     color: #fff;
     font-size: 20px;
@@ -359,7 +360,6 @@ h1:focus {
 .confirm-popup-body {
     font-size: 16px;
     line-height: 1.5;
-    padding-bottom: 20px;
 }
 
 .confirm-button-container {
